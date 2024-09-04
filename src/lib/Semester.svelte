@@ -3,6 +3,7 @@
     
         import Classbox from "./Classbox.svelte";
         import { Button } from "carbon-components-svelte";
+	import { ContinuousDeployment } from "carbon-icons-svelte";
         import AddAlt from "carbon-icons-svelte/lib/AddAlt.svelte";
         import SubtractAlt from "carbon-icons-svelte/lib/SubtractAlt.svelte";
    
@@ -31,10 +32,6 @@
         }
 
         function update_available (courses, chosen, chosen_ids, i, remove=false) {
-            console.log("chosen ids, chosen, i")
-            console.log(chosen_ids)
-            console.log(chosen)
-            console.log(i)
             if (remove && typeof chosen_ids[i] != 'undefined') {
                 if (chosen_ids[i][chosen_ids[i].length - 1] != "w") {
                     available_courses.push(courses.find((course) => course.id == chosen_ids[i]))
@@ -52,7 +49,7 @@
                     })
                 }
             }
-            chosen = chosen;
+            // chosen = chosen;
         };
 
         function add_course() {
@@ -62,16 +59,19 @@
         }
 
         function subtract_course(chosen_item, courses, chosen, chosen_ids) {
+            console.log(chosen_item)
             if (num_courses > 0) {
-                if (chosen_item) {
-                    console.log(chosen_item)
+                num_courses--
+                if (chosen_item && chosen) {
+                    console.log(chosen)
+                    console.log(chosen_ids)
                     update_available(courses, chosen, chosen_ids, chosen.length-1, true)
                 }
                 chosen.pop()
                 chosen_ids.pop()
                 // chosen.length = chosen.length - 1
                 // chosen_ids.length = chosen_ids.length - 1
-                num_courses--
+                
             }
         }
 
@@ -84,7 +84,6 @@
                     available_courses.push(original_course)
                     withdrawn_course.text = original_course.text  + " (W/RP)"
                     withdrawn_course.id = original_course.id + "w"
-                    // available_courses.push(withdrawn_course)
                     available_courses = available_courses
                     available_courses.sort(compare_text)
                 }
