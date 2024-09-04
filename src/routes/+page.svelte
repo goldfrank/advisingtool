@@ -5,10 +5,8 @@
     let otis;
 </script>
 
-<h1>Welcome to SvelteKit</h1>
+<h1>Degree Reduce</h1>
 <br/>
 
-<a href="/semester-planner">Semester Planner for {otis}</a>
-<br/>
-<Typebox bind:name={otis}/>
+<a href="/semester-planner">Semester Planner</a>
 

@@ -13,8 +13,13 @@
         export let chosen = [];
         export let chosen_ids = [];
         export let withdrawn_courses = [];
-        let num_courses = 4;
+        export let num_courses = 4;
     
+        for (let k = 0; k < num_courses; k++) {
+            chosen.push("")
+            chosen_ids.push("")
+        }
+
         function compare_text(x, y){
             if (x.text < y.text) {
                 return -1
@@ -25,8 +30,12 @@
             return 0
         }
 
-        function update_available (courses, chosen, i, remove=false) {
-            if (remove) {
+        function update_available (courses, chosen, chosen_ids, i, remove=false) {
+            console.log("chosen ids, chosen, i")
+            console.log(chosen_ids)
+            console.log(chosen)
+            console.log(i)
+            if (remove && typeof chosen_ids[i] != 'undefined') {
                 if (chosen_ids[i][chosen_ids[i].length - 1] != "w") {
                     available_courses.push(courses.find((course) => course.id == chosen_ids[i]))
                 }
@@ -44,7 +53,6 @@
                 }
             }
             chosen = chosen;
-            console.log(available_courses)
         };
 
         function add_course() {
@@ -53,17 +61,17 @@
             chosen_ids.length ++
         }
 
-        function subtract_course(chosen_item) {
-            console.log(chosen_item)
+        function subtract_course(chosen_item, courses, chosen, chosen_ids) {
             if (num_courses > 0) {
-                num_courses--
                 if (chosen_item) {
-                    update_available(courses, chosen, chosen.length-1, true)
+                    console.log(chosen_item)
+                    update_available(courses, chosen, chosen_ids, chosen.length-1, true)
                 }
-                chosen[-1] = ""
-                chosen_ids[-1] = ""
-                chosen.length --
-                chosen_ids.length --
+                chosen.pop()
+                chosen_ids.pop()
+                // chosen.length = chosen.length - 1
+                // chosen_ids.length = chosen_ids.length - 1
+                num_courses--
             }
         }
 
@@ -82,7 +90,6 @@
                 }
                 chosen_ids[i] = withdrawn_course.id
                 chosen[i] = withdrawn_course.text
-                console.log(chosen)
             }
         }
 
@@ -106,8 +113,8 @@
     bind:selected_id={chosen_ids[i]}
     bind:withdrawn={withdrawn_courses[i]}
     courses={selectable_courses(available_courses, chosen_ids[i], chosen[i])}
-    on:message={update_available(courses, chosen, i, false)}
-    on:cleared={update_available(courses, chosen, i, true)}
+    on:message={update_available(courses, chosen, chosen_ids, i, false)}
+    on:cleared={update_available(courses, chosen, chosen_ids, i, true)}
     on:withdraw={() => withdrawn(i)}
     on:message
     on:cleared
@@ -119,11 +126,13 @@
     icon={AddAlt} 
     kind = "ghost"
     on:click={add_course}
-    >Add Course</Button>
-    <Button 
+    >Add Course
+</Button>
+
+<Button 
     icon={SubtractAlt} 
     kind = "ghost"
-    on:click={() => subtract_course(chosen_ids[chosen_ids.length - 1])}
+    on:click={() => subtract_course(chosen_ids[chosen_ids.length - 1], courses, chosen, chosen_ids)}
     >
     Remove Course
 </Button>
