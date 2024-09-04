@@ -3,14 +3,7 @@
     
         import Classbox from "./Classbox.svelte";
     
-        export let courses = [
-        { id: "csci1111", text: "CSCI 1111"},
-        { id: "csci1112", text: "CSCI 1112"},
-        { id: "csci1311", text: "CSCI 1311"},
-        { id: "csci2113", text: "CSCI 2113"},
-        { id: "bask1001", text: "BASK 1001"},
-        { id: "hist1235", text: "HIST 1235"}
-        ];
+        export let courses = [];
         
         export let available_courses = courses;
         export let chosen = [];
@@ -20,7 +13,6 @@
         function update_available (courses, chosen, i, remove) {
             available_courses = courses;
             if (remove) { 
-                console.log(chosen_ids[i]);
                 chosen_ids[i] = ""
                 chosen[i] = ""
             }
@@ -31,6 +23,8 @@
                     })
                 }
             }
+            chosen = chosen;
+            console.log(chosen);
         };
     </script>
 

@@ -34,20 +34,17 @@
         console.log(chosen);
     };
 
-    function otis (){
-        console.log("otis")
-    }
-    function carl (){
-        console.log("carl")
+    function logging (){
+        chosen_arr = chosen_arr;
     }
 </script>
 
 
-<Semester bind:chosen={chosen_arr[1]} 
-    on:cleared={otis}
-    on:forward={carl}
-    on:otis
-       
+<Semester 
+    courses={courses}
+    bind:chosen={chosen_arr[1]} 
+    on:cleared={logging}
+    on:message={logging}
 />
 
 
