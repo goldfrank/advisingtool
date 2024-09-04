@@ -17,54 +17,39 @@
     let chosen_arr = [];
     let chosen_ids_arr = [];
 
-    function update_available (courses, chosen, i, remove) {
-        available_courses = courses;
-        if (remove) { 
-            console.log(chosen_ids[i]);
-            chosen_ids[i] = ""
-            chosen[i] = ""
-        }
-        for (let course in courses) {
-            if (chosen_ids.includes(courses[course].id)) {
-                available_courses = available_courses.filter(x => {
-                return x.id != courses[course].id;
-                })
-            }
-        }
-        console.log(chosen);
-    };
-
     function logging (){
         chosen_arr = chosen_arr;
     }
 </script>
 
 
-<Semester 
-    courses={courses}
-    bind:chosen={chosen_arr[1]} 
+<Semester
+    name = "F24"
+    courses = {courses}
+    bind:chosen={chosen_arr[0]}
+    bind:available_courses 
     on:cleared={logging}
     on:message={logging}
 />
 
 
+<Semester 
+    name = "S25"
+    courses = {courses}
+    bind:chosen={chosen_arr[1]}
+    bind:available_courses
+    on:cleared={logging}
+    on:message={logging}
+/>
 
-<!-- <h2> <strong>Semester Planner </strong></h2>
-{#each {length: num_courses} as _, i}
-<Classbox 
-    courses={available_courses} 
-    bind:selected={chosen[i]}
-    bind:selected_id={chosen_ids[i]}
-    on:message={update_available(courses, chosen, i, false)}
-    on:cleared={update_available(courses, chosen, i, true)}
-    />
-{/each} -->
 
 <h3>Courses Chosen:</h3>
-{#if chosen_arr[1] }
-    {#each chosen_arr[1] as chosen_course}
-        {#if chosen_course}
-            {chosen_course} <br/>
-        {/if}
-    {/each}
-{/if}
+{#each chosen_arr as chosen}
+    {#if chosen }
+        {#each chosen as chosen_course}
+            {#if chosen_course}
+                {chosen_course} <br/>
+            {/if}
+        {/each}
+    {/if}
+{/each}
