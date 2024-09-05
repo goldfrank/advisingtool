@@ -1,7 +1,5 @@
 <script>
-	import { Number_0 } from "carbon-icons-svelte";
-
-    // @ts-nocheck
+	// @ts-nocheck 
     import Validationbox from "../../lib/Validationbox.svelte"
     import { requirements } from "../../lib/bs19-21.json"
    
@@ -51,9 +49,14 @@
         let avail = course_inventory(formatted_reqs[i]['satisfied_by'])
         all_courses.push({req: req, courses: avail})
     }
-    console.log(all_courses)
-    // NEXT: pickle to json, import in other file -- process only once!
+    
+    all_courses = {"requirements": all_courses}    
+    
+    let jsonData = JSON.stringify(all_courses)
 
 </script>
 
 Course Processor. Nothing to see here.
+
+
+{jsonData}

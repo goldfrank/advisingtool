@@ -7,4 +7,5 @@
 <br/>
 
 <a href="/semester-planner/">Semester Planner</a>
+<a href="/semester-planner/">Degree Reduce</a>
 

@@ -12,9 +12,11 @@
     }
 
     export let courses;
-    export let selectedId;
+    export let selectedId = '';
     export let requirementName = "Requirement";
-    export let semester;
+    export let semester = "f24";
+
+    // console.log(courses)
 
 
     const dispatch = createEventDispatcher();

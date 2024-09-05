@@ -1,55 +1,109 @@
 <script>
     // @ts-nocheck
     import Validationbox from "../../lib/Validationbox.svelte"
-    import { requirements } from "../../lib/bs19-21.json"
+    import { requirements } from "../../lib/19-20_requirements.json"
+    import _ from "lodash";
 
-    let courses = [
-    { id: "csci1111", text: "CSCI 1111"},
-    { id: "csci1112", text: "CSCI 1112: Data Structures and Algorithms"},
-    ];
+    let formatted_reqs = requirements;
 
+    let courses_taken = ['csci1111','csci1112','csci1311', 'csci2113', 
+    'seas1001', 'csci1012', 'csci4511', 'csci3410', 'csci4531', 'csci4243',
+    'csci4244', 'csci3410', 'csci3411', 'math1231', 'math1232', 'csci3401', 'uw1020',
+    'uw1099', 'geol2151', 'amst1200', 'anth3701', 'geog2141', 'cmus1701', 'fina6224',
+    'hist2490', 'amst3950', 'hist6801', 'amst1160', 'csci4331', 'math2184'];
     
-
-    function all_reqs(requirements) {
-        let formatted_reqs = [];
-        let req_keys = Object.keys(requirements)
-        
-        for (let i = 0; i < req_keys.length; i++) {
-            formatted_reqs.push({req: req_keys[i], satisfied_by: requirements[req_keys[i]]})
-        }
-        return formatted_reqs
-    }
-
-    function course_reformat(course_str) {
-        let course_num = course_str.match(r_number)[0];
-        let course_name = course_str.match(/#(.*)/)[1]
-        let fulltext = course_num + " " + course_name
-        let courseid = course_num.toLowerCase().replace(/\s/g, '')
-        return {id: courseid, text:fulltext, num: course_num, desc: course_name}
-    }
-    
-    function course_inventory(satisfied_arr) {
-        let course_collection = [];
-        for (let i = 0; i < satisfied_arr.length; i++) {
-            let course = course_reformat(satisfied_arr[i])
-            let duplicate = false;
-            for (let j = 0; j < course_collection.length; j ++){
-                if (course_collection[j]['id'] == course['id']) {
-                    duplicate = true;
+    function possible_assignments(target_course) {
+        let reqs = [];
+        for (let req in formatted_reqs){
+            for (let course in formatted_reqs[req]['courses']) {
+                if (formatted_reqs[req]['courses'][course]['id'] == target_course) {
+                    reqs.push(formatted_reqs[req]['req']);
                 }
             }
-            if (! duplicate) {
-            course_collection.push(course)
+            
+        }
+        return reqs
+    }
+
+
+    function check_reached(assignments) {
+        let was_reached = false;
+        for (let prior_assignments of reached) {
+            if (_.isEqual(prior_assignments, assignments)) {
+                was_reached = true;
             }
         }
-        return course_collection
+        return was_reached
     }
 
     
-    let r_number = /[A-Z]{2,4} [0-9]{2,4}W?/;
-    let formatted_reqs = all_reqs(requirements)
-   
+       
+
+    function expand(assignments) {
+        let test_assignment;
+        for (let course of courses_taken){
+            if (! Object.keys(assignments).includes(course)) {
+                for (let possible_assignment of possible_assignments(course)) {
+                    if (! Object.values(assignments).includes(possible_assignment)){
+                        test_assignment = Object.assign({}, assignments);
+                        test_assignment[course] = possible_assignment
+                        if (! check_reached(test_assignment)){
+                            return test_assignment;
+                        }
+                    }
+                }
+            }
+        }
+        console.log("xok")
+        return false
+    }
+
+
+
+    let min_possible_score = Math.max(formatted_reqs.length-courses_taken.length, 0);
+    // console.log(min_possible_score)
     
+
+    let frontier = []; 
+    let reached = [];
+    
+    function assign_courses() {
+        let min_score = formatted_reqs.length
+        let assignments = {};
+        frontier.push(assignments)
+        let i = 0;
+        console.log("best possible score", min_possible_score)
+        let best_assignment;
+        while(true){
+            assignments = frontier.pop()
+            let expanded = expand(assignments)
+            if (expanded) {
+                reached.push(expanded)
+                frontier.push(expanded)
+            }
+            let score = formatted_reqs.length - Object.values(assignments).length
+            if (score < min_score) {
+                min_score = score;
+                // console.log(score, assignments)
+                best_assignment = assignments;
+            }
+            if (frontier.length == 0) {
+                console.log(min_score, best_assignment)
+                return best_assignment
+            }
+            i ++
+        }
+        console.log(Object.values(assignments).length, assignments)
+        if (formatted_reqs.length - Object.values(assignments).length == min_possible_score){
+            console.log("Optimal Assignment Found")
+            return assignments
+        }
+    }
+
+    assign_courses()
+
+    // check_reached(assignments)
+    // console.log(Object.entries(otis).includes(assignments))
 
 </script>
 <h1>😌</h1>
@@ -59,9 +113,11 @@
 {#each formatted_reqs as req}
     <Validationbox
     requirementName = {req['req']}
-    courses={(course_inventory(req['satisfied_by']))}
+    courses={req['courses']}
     semester='xok'
     />
 {/each}
 <br/>
 <br/>
+
+<!-- courses={(course_inventory(req['satisfied_by']))} -->
