@@ -22,11 +22,6 @@
     function cleared(event) {
 		dispatch('cleared', event.detail);
 	}
-
-    function withdraw(event){
-        withdrawn = true;
-        dispatch('withdraw', event.detail);
-    }
 </script>
 
 <style>
