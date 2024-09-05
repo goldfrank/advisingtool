@@ -8,5 +8,5 @@
 <h1>Degree Reduce</h1>
 <br/>
 
-<a href="/semester-planner">Semester Planner</a>
+<a href="/semester-planner/">Semester Planner</a>
 

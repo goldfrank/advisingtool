@@ -93,7 +93,7 @@
 </Button>
     
 
-<h3>Courses Chosen:</h3>
+<!-- <h3>Courses Chosen:</h3>
 {#each chosen_arr as chosen}
     {#if chosen }
         {#each chosen as chosen_course}
@@ -102,4 +102,4 @@
             {/if}
         {/each}
     {/if}
-{/each}
+{/each} -->

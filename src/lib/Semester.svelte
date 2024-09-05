@@ -3,7 +3,7 @@
     
         import Classbox from "./Classbox.svelte";
         import { Button } from "carbon-components-svelte";
-	import { ContinuousDeployment } from "carbon-icons-svelte";
+	    import { ContinuousDeployment } from "carbon-icons-svelte";
         import AddAlt from "carbon-icons-svelte/lib/AddAlt.svelte";
         import SubtractAlt from "carbon-icons-svelte/lib/SubtractAlt.svelte";
    
@@ -13,7 +13,6 @@
         available_courses.sort(compare_text)
         export let chosen = [];
         export let chosen_ids = [];
-        export let withdrawn_courses = [];
         export let num_courses = 4;
     
         for (let k = 0; k < num_courses; k++) {
@@ -31,16 +30,16 @@
             return 0
         }
 
-        function update_available (courses, chosen, chosen_ids, i, remove=false) {
-            if (remove && typeof chosen_ids[i] != 'undefined') {
-                if (chosen_ids[i][chosen_ids[i].length - 1] != "w") {
-                    available_courses.push(courses.find((course) => course.id == chosen_ids[i]))
-                }
-                
+        function update_available (courses, chosen, chosen_ids, i, remove=false, subtract=false) {
+            if (remove && ! subtract) {
+                console.log(chosen_ids[i])
+                available_courses.push(courses.find((course) => course.id == chosen_ids[i]))
                 available_courses.sort(compare_text)
-                chosen_ids[i] = ""
-                chosen[i] = ""
-
+                chosen_ids.pop()
+                chosen.pop()
+            }
+            if (remove) {
+                available_courses.sort(compare_text)
             }
             for (let course in courses) {
                 if (chosen_ids.includes(courses[course].id)) {
@@ -61,36 +60,23 @@
         function subtract_course(chosen_item, courses, chosen, chosen_ids) {
             console.log(chosen_item)
             if (num_courses > 0) {
-                num_courses--
-                if (chosen_item && chosen) {
-                    console.log(chosen)
-                    console.log(chosen_ids)
-                    update_available(courses, chosen, chosen_ids, chosen.length-1, true)
-                }
                 chosen.pop()
                 chosen_ids.pop()
+                num_courses--
+                if (chosen_item) {
+                    available_courses.push(courses.find((course) => course.id == chosen_item))
+                    update_available(courses, chosen, chosen_ids, chosen.length-1, true, true)
+                }
+                
                 // chosen.length = chosen.length - 1
                 // chosen_ids.length = chosen_ids.length - 1
+                console.table(chosen_ids)
+                console.table(chosen)
+                console.log(chosen.length)
                 
             }
         }
 
-        function withdrawn(i){
-            if (typeof chosen_ids[i] != 'undefined') {
-                let original_course = courses.find((course) => course.id == chosen_ids[i]);
-                let withdrawn_course = structuredClone(original_course)
-
-                if (withdrawn_course.id[withdrawn_course.id.length - 1] != 'w') {
-                    available_courses.push(original_course)
-                    withdrawn_course.text = original_course.text  + " (W/RP)"
-                    withdrawn_course.id = original_course.id + "w"
-                    available_courses = available_courses
-                    available_courses.sort(compare_text)
-                }
-                chosen_ids[i] = withdrawn_course.id
-                chosen[i] = withdrawn_course.text
-            }
-        }
 
         function selectable_courses(available_courses, selected_id, selected) {
             if (typeof selected_id != 'undefined') {
@@ -110,11 +96,9 @@
 <Classbox 
     bind:selected={chosen[i]}
     bind:selected_id={chosen_ids[i]}
-    bind:withdrawn={withdrawn_courses[i]}
     courses={selectable_courses(available_courses, chosen_ids[i], chosen[i])}
     on:message={update_available(courses, chosen, chosen_ids, i, false)}
     on:cleared={update_available(courses, chosen, chosen_ids, i, true)}
-    on:withdraw={() => withdrawn(i)}
     on:message
     on:cleared
     /> 
