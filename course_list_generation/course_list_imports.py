@@ -37,6 +37,8 @@ def setRemove(original, delete):
 		course_num = long_course.split("#")[0]
 		if course_num not in delete:
 			new.append(long_course)
+		else:
+			print("deleted " + long_course)
 	return new
 
 electives = setRemove(all_courses, exceptions) # remove PCSC and PSIS courses from electives
@@ -68,8 +70,7 @@ for course in all_courses:
 #		This is too nebulously defined in the bulletin, so I am choosing to only exclude CS courses from NTT since they are the discipline of computing.
 # There are also a list of explicit exceptions for NTT courses in the bulletin, which I have included.
 # The extremely nebulous and overly complicated, and often contradictory, Bulletin requirements for NTT are here: https://cs.engineering.gwu.edu/bachelor-science-non-technical-track-requirement
-ntt = setRemove(electives, cs_tech_courses) # remove CS courses from electives
-
+ntt = list(set(electives) - set(cs_tech_courses)) # remove CS courses from electives
 # courses common to all CS degrees ############################################################################################
 
 possible_courses = {}
