@@ -7,7 +7,6 @@
     export let course_semester;
     export let curriculum_year;
     
-
     function possible_assignments(target_course) {
         let reqs = [];
         for (let req in formatted_reqs){
@@ -60,7 +59,7 @@
     }
 
     function expand(assignments) {
-        
+        // console.log("======Expanding=====")
         let test_assignment;
         let to_return = [];
         for (let course_and_semester of course_semester){
@@ -92,7 +91,7 @@
     export function reassign(course_semester_update) {
         course_semester = course_semester_update;
         course_semester = sort_and_prune(course_semester)
-        console.log(course_semester)
+        console.log("sorted course list", course_semester)
         final_assignment = assign_courses();
         console.log("final assignment:",final_assignment);
         unused = find_unused(course_semester, final_assignment);
@@ -123,7 +122,7 @@
                 best_assignment = assignments;
                 console.log(min_score, assignments)
             }
-            if (frontier.length == 0 || min_score == min_possible_score) {
+            if (frontier.length == 0 || min_score == min_possible_score || i > 250) {
                 console.log("assigning with score", min_score, best_assignment)
                 return best_assignment
             }
