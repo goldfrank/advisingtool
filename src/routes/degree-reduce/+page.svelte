@@ -10,7 +10,15 @@
     'seas1001', 'csci1012', 'csci4511', 'csci3410', 'csci4531', 'csci4243',
     'csci4244', 'csci3410', 'csci3411', 'math1231', 'math1232', 'csci3401', 'uw1020',
     'uw1099', 'geol2151', 'amst1200', 'anth3701', 'geog2141', 'cmus1701', 'fina6224',
-    'hist2490', 'amst3950', 'hist6801', 'amst1160', 'csci4331', 'math2184'];
+    'hist2490', 'hist6801', 'hist6801', 'hist6801', 'csci4331', 'math2184', 'bisc1111',
+    'csci3212', 'stat4157', 'csci4364', 'anth1003', 'anth1004', 'bisc1112', 'chem1112', 'csci1010', 'csci2312', 'csci2501', 'csci2541w', 'csci3313'];
+
+    let course_semester = [];
+    for (let c of courses_taken) {
+        course_semester.push([c, 'fall23'])
+    }
+    course_semester[26][1] = "spring23";
+    console.log(course_semester)
     
     function possible_assignments(target_course) {
         let reqs = [];
@@ -25,7 +33,6 @@
         return reqs
     }
 
-
     function check_reached(assignments) {
         let was_reached = false;
         for (let prior_assignments of reached) {
@@ -36,17 +43,26 @@
         return was_reached
     }
 
-    
-       
+    function check_tuple(assignments, course, semester){
+        let found = false;
+        for (let v of Object.values(assignments)) {
+            if (v[0] == course && v[1] == semester) {
+                found = true
+            }
+        }
+        return found
+    }
 
     function expand(assignments) {
         let test_assignment;
-        for (let course of courses_taken){
-            if (! Object.keys(assignments).includes(course)) {
+        for (let course_and_semester of course_semester){
+            let course = course_and_semester[0]
+            let semester = course_and_semester[1]
+            if (! check_tuple(assignments, course, semester)) {
                 for (let possible_assignment of possible_assignments(course)) {
-                    if (! Object.values(assignments).includes(possible_assignment)){
+                    if (! Object.keys(assignments).includes(possible_assignment)){
                         test_assignment = Object.assign({}, assignments);
-                        test_assignment[course] = possible_assignment
+                        test_assignment[possible_assignment] = [course, semester]
                         if (! check_reached(test_assignment)){
                             return test_assignment;
                         }
@@ -54,16 +70,10 @@
                 }
             }
         }
-        console.log("xok")
         return false
     }
 
-
-
-    let min_possible_score = Math.max(formatted_reqs.length-courses_taken.length, 0);
-    // console.log(min_possible_score)
-    
-
+    let min_possible_score = Math.max(formatted_reqs.length-courses_taken.length, 0);  
     let frontier = []; 
     let reached = [];
     
@@ -87,21 +97,19 @@
                 // console.log(score, assignments)
                 best_assignment = assignments;
             }
-            if (frontier.length == 0) {
+            if (frontier.length == 0 || min_score == min_possible_score) {
                 console.log(min_score, best_assignment)
                 return best_assignment
             }
-            i ++
-        }
-        console.log(Object.values(assignments).length, assignments)
-        if (formatted_reqs.length - Object.values(assignments).length == min_possible_score){
-            console.log("Optimal Assignment Found")
-            return assignments
         }
     }
 
-    assign_courses()
-
+    let final_assignment = assign_courses();
+    let flipped_assignment = {};
+    for (let f of Object.keys(final_assignment)) {
+        flipped_assignment[final_assignment[f]] = f
+    }
+    console.log("Done!")
     // check_reached(assignments)
     // console.log(Object.entries(otis).includes(assignments))
 
@@ -114,7 +122,8 @@
     <Validationbox
     requirementName = {req['req']}
     courses={req['courses']}
-    semester='xok'
+    semester={final_assignment[req['req']][1]}
+    selectedId = {final_assignment[req['req']][0]}
     />
 {/each}
 <br/>

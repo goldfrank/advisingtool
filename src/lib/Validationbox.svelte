@@ -14,7 +14,7 @@
     export let courses;
     export let selectedId = '';
     export let requirementName = "Requirement";
-    export let semester = "f24";
+    export let semester = "Winter 2019";
 
     // console.log(courses)
 
@@ -86,7 +86,7 @@
     </div>
     <div class="req-wrap">
         <div class="semester-name">
-            SEMESTER
+            {semester}
         </div>
     </div>
 </div>
