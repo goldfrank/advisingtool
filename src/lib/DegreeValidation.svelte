@@ -30,13 +30,16 @@
         return was_reached
     }
 
-    function check_tuple(assignments, course, semester){
+    
+
+    function check_tuple(test_assignment, course, semester){
         let found = false;
-        for (let v of Object.values(assignments)) {
+        for (let v of Object.values(test_assignment)) {
             if (v[0] == course && v[1] == semester) {
                 found = true
             }
         }
+        console.log("checked", found, test_assignment, course, semester)
         return found
     }
 
@@ -61,24 +64,21 @@
     function expand(assignments) {
         // console.log("======Expanding=====")
         let test_assignment;
-        let to_return = [];
+        test_assignment = Object.assign({}, assignments);
         for (let course_and_semester of course_semester){
             let course = course_and_semester[0]
             let semester = course_and_semester[1]
-            if (! check_tuple(assignments, course, semester)) {
+            if (! check_tuple(test_assignment, course, semester)) {
+                console.log("expansion:", test_assignment, course, semester)
                 for (let possible_assignment of possible_assignments(course)) {
                     if (! Object.keys(assignments).includes(possible_assignment)){
-                        test_assignment = Object.assign({}, assignments);
                         test_assignment[possible_assignment] = [course, semester]
                         if (! check_reached(test_assignment)){
-                            to_return.push(test_assignment);
+                            return test_assignment;
                         }
                     }
                 }
             }
-        }
-        if (to_return.length > 0) {
-            return to_return
         }
         return false
     }
@@ -108,12 +108,14 @@
         while(true){
             i ++
             assignments = frontier.pop()
-            let all_expanded = expand(assignments)
-            if (all_expanded) {
-                for (let expanded of all_expanded) {
-                    reached.push(expanded)
-                    frontier.push(expanded)
-                } 
+            let new_assignment = expand(assignments)
+            let j = 0
+            while (new_assignment && j < 25) {
+                frontier.push(new_assignment)
+                reached.push(new_assignment)
+                new_assignment = expand(assignments)
+                // console.log(new_assignment)
+                j ++;
             }
             let score = formatted_reqs.length - Object.values(assignments).length
             // console.log(score)
