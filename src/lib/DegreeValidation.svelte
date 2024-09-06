@@ -63,7 +63,7 @@
 
     function expand(assignments) {
         // console.log("======Expanding=====")
-        let test_assignment;
+        let test_assignment;    
         test_assignment = Object.assign({}, assignments);
         for (let course_and_semester of course_semester){
             let course = course_and_semester[0]
