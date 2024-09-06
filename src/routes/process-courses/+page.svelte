@@ -1,7 +1,7 @@
 <script>
 	// @ts-nocheck 
     import Validationbox from "../../lib/Validationbox.svelte"
-    import { requirements } from "../../lib/bs19-21.json"
+    import { requirements } from "../../lib/bs19-21a.json"
    
 
     function all_reqs(requirements) {

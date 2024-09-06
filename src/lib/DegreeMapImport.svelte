@@ -47,7 +47,7 @@
         let counted_courses = []
         let uncounted_courses = []
         for (let course of course_semester) {
-            if  (course[2] == "F" || course[2] == "W") {
+            if  (course[2] == "F" || course[2] == "W" || +course[3] <=2 ) {
                 uncounted_courses.push(course)
             }
             else {

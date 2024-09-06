@@ -41,7 +41,26 @@
         return found
     }
 
+
+    function sort_and_prune(course_semester) {
+        let new_course_semester = []
+        for (let c in course_semester) {
+            if (course_semester[c].length < 5) {
+                course_semester[c][4] = possible_assignments(course_semester[c][0]).length
+            }
+            if (course_semester[c][4] > 0) {
+                new_course_semester.push(course_semester[c])
+            }
+            else{
+                console.log("Pruning", course_semester[c])
+            }
+            
+        }
+        return _.sortBy(new_course_semester, [(o) => o[4]])
+    }
+
     function expand(assignments) {
+        
         let test_assignment;
         let to_return = [];
         for (let course_and_semester of course_semester){
@@ -72,6 +91,8 @@
 
     export function reassign(course_semester_update) {
         course_semester = course_semester_update;
+        course_semester = sort_and_prune(course_semester)
+        console.log(course_semester)
         final_assignment = assign_courses();
         console.log("final assignment:",final_assignment);
         unused = find_unused(course_semester, final_assignment);
@@ -86,7 +107,7 @@
         let i = 0;
         let best_assignment = Object.assign({}, assignments);
         while(true){
-            console.log('xok')
+            i ++
             assignments = frontier.pop()
             let all_expanded = expand(assignments)
             if (all_expanded) {
@@ -96,7 +117,7 @@
                 } 
             }
             let score = formatted_reqs.length - Object.values(assignments).length
-            console.log(score)
+            // console.log(score)
             if (score < min_score) {
                 min_score = score;
                 best_assignment = assignments;
