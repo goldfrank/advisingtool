@@ -3,9 +3,9 @@
     import Validationbox from "./Validationbox.svelte";
     import _ from "lodash";
     
-    export let formatted_reqs;
-    export let course_semester;
-    export let curriculum_year;
+    export let formatted_reqs = [];
+    export let course_details = [];
+    export let curriculum_year = "21";
     
     function possible_assignments(target_course) {
         let reqs = [];
@@ -14,15 +14,14 @@
                 if (formatted_reqs[req]['courses'][course]['id'] == target_course) {
                     reqs.push(formatted_reqs[req]['req']);
                 }
-            }
-            
+            }        
         }
-        return reqs
+        return reqs.reverse()
     }
 
-    function check_reached(assignments) {
+    function check_collection(assignments, collection) {
         let was_reached = false;
-        for (let prior_assignments of reached) {
+        for (let prior_assignments of collection) {
             if (_.isEqual(prior_assignments, assignments)) {
                 was_reached = true;
             }
@@ -30,113 +29,119 @@
         return was_reached
     }
 
-    
-
-    function check_tuple(test_assignment, course, semester){
-        let found = false;
-        for (let v of Object.values(test_assignment)) {
-            if (v[0] == course && v[1] == semester) {
-                found = true
+    function sort_and_prune(course_details) {
+        let new_course_details = []
+        for (let c in course_details) {
+            if (course_details[c].length < 5) {
+                course_details[c][4] = possible_assignments(course_details[c][0]).length
             }
-        }
-        console.log("checked", found, test_assignment, course, semester)
-        return found
-    }
-
-
-    function sort_and_prune(course_semester) {
-        let new_course_semester = []
-        for (let c in course_semester) {
-            if (course_semester[c].length < 5) {
-                course_semester[c][4] = possible_assignments(course_semester[c][0]).length
-            }
-            if (course_semester[c][4] > 0) {
-                new_course_semester.push(course_semester[c])
+            if (course_details[c][4] > 0) {
+                new_course_details.push(course_details[c])
             }
             else{
-                console.log("Pruning", course_semester[c])
+                console.log("Pruning", course_details[c])
             }
             
         }
-        return _.sortBy(new_course_semester, [(o) => o[4]])
+        return _.sortBy(new_course_details, [(o) => o[4]]).reverse()
     }
 
     function expand(assignments) {
-        // console.log("======Expanding=====")
-        let test_assignment;    
-        test_assignment = Object.assign({}, assignments);
-        for (let course_and_semester of course_semester){
-            let course = course_and_semester[0]
-            let semester = course_and_semester[1]
-            if (! check_tuple(test_assignment, course, semester)) {
-                console.log("expansion:", test_assignment, course, semester)
-                for (let possible_assignment of possible_assignments(course)) {
-                    if (! Object.keys(assignments).includes(possible_assignment)){
-                        test_assignment[possible_assignment] = [course, semester]
-                        if (! check_reached(test_assignment)){
-                            return test_assignment;
+        // generate all successor assignments
+        let candidate_assignments = Object.assign({}, assignments);
+        for (let course of course_details) {
+            let course_str = course[0]+ "#" + course[1]
+            if (! Object.keys(candidate_assignments).includes(course_str)) {
+                for (let possible_slot of possible_assignments(course[0])) {
+                    if (! Object.values(candidate_assignments).includes(possible_slot)) {
+                        candidate_assignments[course_str] = possible_slot;
+                        if (! check_collection(candidate_assignments, reached) && ! check_collection(candidate_assignments, frontier) ) {
+                            if (! curriculum_year == "C.Y. 2021 B.S.") {
+                            frontier.push(candidate_assignments)
+                            candidate_assignments = Object.assign({}, assignments);
+                            }
+                            else {
+                            // check 1-credit general electives
+                            console.log(course)
+                            if ((possible_slot.includes("elective_") && +course[4] < 3)) {
+                                console.log("too few credits", course)    
+                                break
+                            }
+                            if (possible_slot.includes("sci_2")) {
+                                let to_break = false
+                                for (let assignment of Object.keys(candidate_assignments)) {
+                                    if (assignment.slice(0,4) == course[0].match(/[A-Z]{4}/)) {
+                                        to_break = true;
+                                    }
+                                }
+                                if (to_break) { 
+                                    break }
+                            }
+                            frontier.push(candidate_assignments)
+                            candidate_assignments = Object.assign({}, assignments);
+                            }
                         }
                     }
                 }
             }
         }
-        return false
     }
 
-    let min_possible_score = Math.max(formatted_reqs.length-course_semester.length, 0);  
+    let min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);  
     let frontier = []; 
     let reached = [];
     let unused = [];
 
-    export function reassign(course_semester_update) {
-        course_semester = course_semester_update;
-        course_semester = sort_and_prune(course_semester)
-        console.log("sorted course list", course_semester)
-        final_assignment = assign_courses();
-        console.log("final assignment:",final_assignment);
-        unused = find_unused(course_semester, final_assignment);
-    }
     
     function assign_courses() {
-        min_possible_score = Math.max(formatted_reqs.length-course_semester.length, 0)
-        console.log("best possible score:", min_possible_score)
-        let min_score = formatted_reqs.length
-        let assignments = {};
-        frontier.push(assignments)
-        let i = 0;
-        let best_assignment = Object.assign({}, assignments);
-        while(true){
-            i ++
-            assignments = frontier.pop()
-            let new_assignment = expand(assignments)
-            let j = 0
-            while (new_assignment && j < 25) {
-                frontier.push(new_assignment)
-                reached.push(new_assignment)
-                new_assignment = expand(assignments)
-                // console.log(new_assignment)
-                j ++;
-            }
-            let score = formatted_reqs.length - Object.values(assignments).length
-            // console.log(score)
-            if (score < min_score) {
+        min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);
+        console.log("best possible score:", min_possible_score);
+        let min_score = formatted_reqs.length;
+        let score = formatted_reqs.length;
+        let assignments = {}; // course#semester: slot
+        let best_assignments = {}
+        expand(assignments);
+        let k = 0;
+        while (true && min_score > min_possible_score && k < 5000) {
+            assignments = frontier.pop();
+            reached.push(assignments)
+            score = formatted_reqs.length-Object.keys(assignments).length;
+            expand(assignments);
+            if (score <= min_score) {
                 min_score = score;
-                best_assignment = assignments;
-                console.log(min_score, assignments)
+                best_assignments = Object.assign({}, assignments);
+                console.log(score, best_assignments);
             }
-            if (frontier.length == 0 || min_score == min_possible_score || i > 250) {
-                console.log("assigning with score", min_score, best_assignment)
-                return best_assignment
+            if (k % 100 == 0){
+                console.log(k)
             }
+            k++;
         }
+        return(best_assignments)
     }
 
-    function find_unused(course_semester, assignments) {
+
+    let swapped_assignments = {}
+    let final_assignments = {};
+    
+    export function reassign(course_details_update) {
+        course_details = course_details_update;
+        course_details = sort_and_prune(course_details)
+        console.log("sorted course list", course_details)
+        final_assignments = assign_courses();
+        for (let k of Object.keys(final_assignments)) {
+            swapped_assignments[final_assignments[k]] =k;
+        }
+        console.log("Swapped", swapped_assignments)
+        unused = find_unused(course_details, final_assignments);
+    }
+
+    function find_unused(course_details, assignments) {
         let unused = [];
-        for (let course of course_semester) {
+        for (let course of course_details) {
             let used = false;
-            for (let assignment of Object.values(assignments)) {
-                if (course[0] == assignment[0]){
+            for (let assignment of Object.keys(assignments)) {
+                if (course[0] + "#" + course[1] == assignment){
                     used = true;
                 }
             }
@@ -147,27 +152,32 @@
         return unused;
     }
 
-    let final_assignment = assign_courses();
     
+    function semester_if_exists(x, req){
+        let k = req['req']
+        if (Object.keys(x).length > 0){
+            if (Object.keys(x).includes(k)) {
+                return x[k].split("#")[1]
+            }
+        }
+        return "None"
+    }
+
+    function course_if_exists(x, req){
+        let k = req['req']
+        if (Object.keys(x).length > 0){
+            if (Object.keys(x).includes(k)) {
+                return x[k].split("#")[0]
+            }
+        }
+        return "None"
+    }
+
     console.log("Done!")
 
-    function semester_assignment(final_assignment, req) {
-        if (Object.values(final_assignment).length > 0) {
-            if (Object.keys(final_assignment).includes(req['req'])) {
-                return final_assignment[req['req']][1];
-            }
-        }
-        return "None";
-    }
-    
-    function selectedId_assignment(final_assignment, req) {
-        if (Object.values(final_assignment).length > 0) {
-            if (Object.keys(final_assignment).includes(req['req'])) {
-                return final_assignment[req['req']][0];
-            }
-        }
-        return
-    }
+
+
+
 </script>
 
 <h3>{curriculum_year} Curriculum</h3>
@@ -175,8 +185,8 @@
     <Validationbox
     requirementName = {req['req']}
     courses={req['courses']}
-    semester={semester_assignment(final_assignment, req)}
-    selectedId = {selectedId_assignment(final_assignment, req)}
+    semester={semester_if_exists(swapped_assignments, req)}
+    selectedId = {course_if_exists(swapped_assignments, req)}
     />
 {/each}
 <br/><br/>

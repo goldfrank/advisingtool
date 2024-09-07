@@ -42,7 +42,7 @@
         <DegreeValidation
             course_semester={course_semester}
             formatted_reqs={formatted_reqs}
-            curriculum_year={"2019-2020 B.S."}
+            curriculum_year={"C.Y. 2021 B.S."}
             bind:reassign={reassign}
         />
       </TabContent>
