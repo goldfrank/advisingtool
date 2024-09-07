@@ -46,6 +46,29 @@
         return _.sortBy(new_course_details, [(o) => o[4]]).reverse()
     }
 
+    function cy_checks(assignments, course, possible_slot, cy) {
+        if (cy == "C.Y. 2021 B.S.") {
+            // check 1-credit general electives
+            if ((possible_slot.includes("elective_") && +course[4] < 3)) {
+                console.log("too few credits", course)    
+                return false
+            }
+            // check for two-couse science sequence
+            if (possible_slot.includes("sci_2")) {
+                let to_break = false
+                for (let assignment of Object.keys(candidate_assignments)) {
+                    if (assignment.slice(0,4) == course[0].match(/[A-Z]{4}/)) {
+                        to_break = true;
+                    }
+                }
+                if (to_break) { 
+                    return false 
+                }
+            }
+        }
+        return true
+    }
+
     function expand(assignments) {
         // generate all successor assignments
         let candidate_assignments = Object.assign({}, assignments);
@@ -56,27 +79,7 @@
                     if (! Object.values(candidate_assignments).includes(possible_slot)) {
                         candidate_assignments[course_str] = possible_slot;
                         if (! check_collection(candidate_assignments, reached) && ! check_collection(candidate_assignments, frontier) ) {
-                            if (! curriculum_year == "C.Y. 2021 B.S.") {
-                            frontier.push(candidate_assignments)
-                            candidate_assignments = Object.assign({}, assignments);
-                            }
-                            else {
-                            // check 1-credit general electives
-                            console.log(course)
-                            if ((possible_slot.includes("elective_") && +course[4] < 3)) {
-                                console.log("too few credits", course)    
-                                break
-                            }
-                            if (possible_slot.includes("sci_2")) {
-                                let to_break = false
-                                for (let assignment of Object.keys(candidate_assignments)) {
-                                    if (assignment.slice(0,4) == course[0].match(/[A-Z]{4}/)) {
-                                        to_break = true;
-                                    }
-                                }
-                                if (to_break) { 
-                                    break }
-                            }
+                            if (cy_checks(assignment, course, possible_slot, curriculum_year)) {
                             frontier.push(candidate_assignments)
                             candidate_assignments = Object.assign({}, assignments);
                             }

@@ -70,8 +70,8 @@
 
 <div style="width: 55rem">
     <TextArea 
-        labelText="" 
-        placeholder="Copy and Paste from Degree Map Here" 
+        labelText="Go to Degree Map, select all, copy, and paste below:" 
+        placeholder="Raw input from degree map goes here..." 
         bind:value={text_input}
     />
 </div>
