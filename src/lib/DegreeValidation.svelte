@@ -55,10 +55,12 @@
     }
 
 	function working(finished) {
-        console.log('dispatch')
         dispatch('working', finished);
 	}
     
+
+    
+
     function possible_assignments(target_course) {
         let reqs = [];
         for (let req in formatted_reqs){
@@ -71,15 +73,35 @@
         return reqs.reverse()
     }
 
-    function check_collection(assignments, collection) {
-        let was_reached = false;
-        for (let prior_assignments of collection) {
-            if (_.isEqual(prior_assignments, assignments)) {
-                was_reached = true;
-            }
-        }
-        return was_reached
+    function generate_assign_table(){
+        let possible_assign_table = {};
+        console.log("populating table")
+            for (let course of course_details) {
+                let target_course = course[0];
+                // console.log(target_course)
+                let reqs = [];
+                for (let req in formatted_reqs){
+                    for (let course in formatted_reqs[req]['courses']) {
+                        if (formatted_reqs[req]['courses'][course]['id'] == target_course) {
+                            reqs.push(formatted_reqs[req]['req']);
+                        }
+                    }        
+                }
+                possible_assign_table[target_course] = reqs.reverse()
+            } 
+        console.log(possible_assign_table)
+        return possible_assign_table
     }
+
+    // function check_collection(assignments, collection) {
+    //     let was_reached = false;
+    //     for (let prior_assignments of collection) {
+    //         if (_.isEqual(prior_assignments, assignments)) {
+    //             was_reached = true;
+    //         }
+    //     }
+    //     return was_reached
+    // }
 
     function sort_and_prune(course_details) {
         let new_course_details = []
@@ -101,7 +123,7 @@
     function cy_checks(assignments, candidate_assignments, course, possible_slot, cy) {
         if (cy == "C.Y. 2021 B.S.") {
             // check 1-credit general electives
-            if ((possible_slot.includes("elective_") && +course[4] < 3)) {
+            if ((possible_slot.includes("elect") && (course[3].includes('1') || course[3].includes('2')) )) {
                 console.log("too few credits", course)    
                 return false
             }
@@ -117,24 +139,32 @@
                     return false 
                 }
             }
+            // check for 6534 repeats
+            if (course[0].includes("csci6534")) {
+                if (JSON.stringify(candidate_assignments).match(/csci6534/g).length > 1) {
+                    return false
+                }
+            }
         }
         return true
     }
 
-    function expand(assignments) {
+    function expand(assignments, table) {
         // generate all successor assignments
         let candidate_assignments = Object.assign({}, assignments);
         for (let course of course_details) {
             let course_str = course[0]+ "#" + course[1]
             if (! Object.keys(candidate_assignments).includes(course_str)) {
-                for (let possible_slot of possible_assignments(course[0])) {
+                for (let possible_slot of table[course[0]]) {
                     if (! Object.values(candidate_assignments).includes(possible_slot)) {
                         candidate_assignments[course_str] = possible_slot;
-                        if (! check_collection(candidate_assignments, reached) && ! check_collection(candidate_assignments, frontier) ) {
+                        if (!( JSON.stringify(candidate_assignments) in frontier_dict )) {
                             if (cy_checks(assignments, candidate_assignments, course, possible_slot, curriculum_year)) {
-                            frontier.push(candidate_assignments)
-                            candidate_assignments = Object.assign({}, assignments);
+                                frontier.push(candidate_assignments)
+                                frontier_dict[JSON.stringify(candidate_assignments)] = true;
+                                
                             }
+                             candidate_assignments = Object.assign({}, assignments);   
                         }
                     }
                 }
@@ -143,27 +173,37 @@
     }
 
     let min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);  
-    let frontier = []; 
-    let reached = [];
+    let frontier = [];
+    let frontier_dict = {}
+    let reached = {};
     let unused = [];
 
     
-    function assign_courses() {
+    function assign_courses(table) {
         min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);
         console.log("best possible score:", min_possible_score);
         let min_score = formatted_reqs.length;
         let score = formatted_reqs.length;
         let assignments = {}; // course#semester: slot
         let best_assignments = {}
-        expand(assignments);
-        while (true && min_score > min_possible_score) {
+        expand(assignments, table);
+        console.log("first frontier:", frontier)
+        console.log("first frontier dict:", frontier_dict)
+        let k = 0
+        while (true && min_score > min_possible_score && k < 1001) {
             assignments = frontier.pop();
-            reached.push(assignments)
+            delete frontier_dict[JSON.stringify(assignments)]
+            // reached.push(assignments)
             score = formatted_reqs.length-Object.keys(assignments).length;
-            expand(assignments);
-            if (score <= min_score) {
+            expand(assignments, table);
+            if (score < min_score) {
+                k = 0
                 min_score = score;
                 best_assignments = Object.assign({}, assignments);
+                console.log(score, best_assignments)
+            }
+            if (score == min_score) {
+                k++;
             }
         }
         working(true)
@@ -176,18 +216,18 @@
     
     export function reassign(course_details_update) {
         working(false)
-            setTimeout(function() {
-            course_details = Object.assign({}, course_details_update);
-            course_details = sort_and_prune(course_details)
-            console.log("sorted course list", course_details)
-            final_assignments = assign_courses();
-            for (let k of Object.keys(final_assignments)) {
-                swapped_assignments[final_assignments[k]] =k;
-            }
-            console.log("Swapped", swapped_assignments)
-            unused = find_unused(course_details_update, final_assignments);
-            console.log(unused)
-        },50)
+        course_details = Object.assign({}, course_details_update);
+        course_details = sort_and_prune(course_details)
+        let assign_table = generate_assign_table();
+        console.log("sorted course list", course_details)
+        final_assignments = assign_courses(assign_table);
+        for (let k of Object.keys(final_assignments)) {
+            swapped_assignments[final_assignments[k]] =k;
+        }
+        console.log("Swapped", swapped_assignments)
+        unused = find_unused(course_details_update, final_assignments);
+        console.log(unused)
+
     }
 
     function find_unused(course_details, assignments) {

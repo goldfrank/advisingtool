@@ -6,6 +6,7 @@
     import { Tabs, Tab, TabContent } from "carbon-components-svelte";
     import DegreeValidation from "../../lib/DegreeValidation.svelte"
     import DegreeMapImport from "../../lib/DegreeMapImport.svelte"
+    import UAF from "../../lib/UAF.svelte"
 
     let formatted_reqs = requirements;
     let reassign;
@@ -29,12 +30,20 @@
         let finished = event.detail;
         if (! finished){
             header_emoji = header_emoji = "🤔🤔 Validating..."
-            subtext = "(This might take a minute or two, please be patient.)"
+            subtext = "(This will take a brief moment...)"
         }
         else {
             header_emoji = "😌 Validation Complete!"
             subtext = ""
         }
+    }
+
+    function add_courses(event) {
+        let new_courses = event.detail
+        console.log('adding_courses')
+        course_semester = course_semester.concat(new_courses)
+        // DEDUPE
+        reassign(course_semester)
     }
 
 </script>
@@ -44,7 +53,7 @@
 <Tabs>
     <Tab label="Degree Validation" />
     <Tab label="Import Data" />
-    <Tab label="xok" />
+    <Tab label="Add Courses" />
     <svelte:fragment slot="content">
       <TabContent>
         <DegreeValidation
@@ -60,7 +69,11 @@
             on:data_import={handle_import}
         />
       </TabContent>
-      <TabContent>xok</TabContent>
+      <TabContent>
+        <UAF 
+        on:courses_added={add_courses}
+        />
+      </TabContent>
     </svelte:fragment>
   </Tabs>
   
