@@ -1,0 +1,54 @@
+diff --git a/node_modules/carbon-components-svelte/src/ComboBox/ComboBox.svelte b/node_modules/carbon-components-svelte/src/ComboBox/ComboBox.svelte
+index 0aee135..2d2ff73 100644
+--- a/node_modules/carbon-components-svelte/src/ComboBox/ComboBox.svelte
++++ b/node_modules/carbon-components-svelte/src/ComboBox/ComboBox.svelte
+@@ -380,7 +380,8 @@
+         on:scroll
+         bind:ref="{listRef}"
+       >
+-        {#each filteredItems as item, i (item.id)}
++        <!-- {#each filteredItems as item, i (item.id)} -->
++        {#each filteredItems.slice(0,25) as item, i (item.id)}
+           <ListBoxMenuItem
+             id="{item.id}"
+             active="{selectedId === item.id}"
+@@ -411,6 +412,39 @@
+             {/if}
+           </ListBoxMenuItem>
+         {/each}
++        {#if filteredItems.length > 25}
++        {@const item = filteredItems[25]}
++        {@const i = 25}
++        <ListBoxMenuItem
++            id="{item.id}"
++            active="{selectedId === item.id}"
++            highlighted="{highlightedIndex === i}"
++            disabled="{item.disabled}"
++            on:click="{(e) => {
++              if (item.disabled) {
++                e.stopPropagation();
++                return;
++              }
++              // selectedId = item.id;
++              open = false;
++
++              // if (filteredItems[i]) {
++              //   value = itemToString(filteredItems[i]);
++              // }
++            }}"
++            on:mouseenter="{() => {
++              if (item.disabled) return;
++              highlightedIndex = i;
++            }}"
++          >
++            <slot item="{item}" index="{i}">
++              {filteredItems.length - 5} more ...
++            </slot>
++            {#if selectedItem && selectedItem.id === item.id}
++              <Checkmark class="bx--list-box__menu-item__selected-icon" />
++            {/if}
++          </ListBoxMenuItem>
++        {/if}
+       </ListBoxMenu>
+     {/if}
+   </ListBox>

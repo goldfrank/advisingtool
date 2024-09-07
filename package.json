@@ -9,7 +9,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"postinstall": "patch-package"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -32,6 +33,7 @@
 	"type": "module",
 	"dependencies": {
 		"carbon-icons-svelte": "^12.11.0",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"patch-package": "^8.0.0"
 	}
 }
