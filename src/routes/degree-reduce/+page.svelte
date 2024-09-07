@@ -41,8 +41,20 @@
     function add_courses(event) {
         let new_courses = event.detail
         console.log('adding_courses')
-        course_semester = course_semester.concat(new_courses)
-        // DEDUPE
+        for (let course of new_courses) {
+            let dupe = false;
+            for (let old_course of course_semester) {
+                if (((old_course[0] == course[0]) && (old_course[1] == course[1]))) {
+                    dupe = true;
+                }
+            }
+            if (! dupe) {
+            course_semester = course_semester.concat([course])
+            }
+        }
+        if (course_semester.length == 0) {
+            course_semester = new_courses
+        }
         reassign(course_semester)
     }
 

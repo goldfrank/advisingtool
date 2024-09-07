@@ -124,7 +124,6 @@
         if (cy == "C.Y. 2021 B.S.") {
             // check 1-credit general electives
             if ((possible_slot.includes("elect") && (course[3].includes('1') || course[3].includes('2')) )) {
-                console.log("too few credits", course)    
                 return false
             }
             // check for two-couse science sequence
@@ -164,7 +163,9 @@
                                 frontier_dict[JSON.stringify(candidate_assignments)] = true;
                                 
                             }
-                             candidate_assignments = Object.assign({}, assignments);   
+                            
+                            candidate_assignments = Object.assign({}, assignments);   
+                            
                         }
                     }
                 }
@@ -190,7 +191,7 @@
         console.log("first frontier:", frontier)
         console.log("first frontier dict:", frontier_dict)
         let k = 0
-        while (true && min_score > min_possible_score && k < 1001) {
+        while (true && min_score > min_possible_score && k < 1001 && frontier.length > 0) {
             assignments = frontier.pop();
             delete frontier_dict[JSON.stringify(assignments)]
             // reached.push(assignments)
@@ -232,6 +233,7 @@
 
     function find_unused(course_details, assignments) {
         let unused = [];
+        console.log("course details", course_details)
         for (let course of course_details) {
             let used = false;
             for (let assignment of Object.keys(assignments)) {
