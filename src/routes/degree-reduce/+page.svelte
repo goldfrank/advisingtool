@@ -10,18 +10,13 @@
     let formatted_reqs = requirements;
     let reassign;
 
-    let courses_taken = ['csci1111','csci1112','csci1311', 'csci2113', 
-    'seas1001', 'csci1012', 'csci4511', 'csci3410', 'csci4531', 'csci4243',
-    'csci4244', 'csci3410', 'csci3411', 'math1231', 'math1232', 'csci3401', 'uw1020',
-    'uw1099', 'geol2151', 'amst1200', 'anth3701', 'geog2141', 'cmus1701', 'fina6224',
-    'hist2490', 'hist6801', 'hist6801', 'hist6801', 'csci4331', 'math2184', 'bisc1111',
-    'csci3212', 'stat4157', 'csci4364', 'anth1003', 'anth1004', 'bisc1112', 'chem1112', 'csci1010', 'csci2312', 'csci2501', 'csci2541w', 'csci3313'];
+    let header_emoji = "🧐 Degree Progress Validation Tool";
+    let subtext = "";
 
     let course_semester = [];
-    // for (let c of courses_taken) {
-    //     course_semester.push([c, 'fall23'])
-    // }
-    // course_semester[26][1] = "spring23";
+    for (let req in formatted_reqs) {
+        formatted_reqs[req]['courses'] = _.sortBy(formatted_reqs[req]['courses'], [(o) => o['id']])
+    }
     
     
     function handle_import(event) {
@@ -30,8 +25,21 @@
         reassign(course_semester);
     }
 
+    function update_working(event){
+        let finished = event.detail;
+        if (! finished){
+            header_emoji = header_emoji = "🤔🤔 Validating..."
+            subtext = "(This might take a minute or two, please be patient.)"
+        }
+        else {
+            header_emoji = "😌 Validation Complete!"
+            subtext = ""
+        }
+    }
+
 </script>
-<h1>😌</h1>
+<h1>{header_emoji}</h1>
+{subtext}
 <br/>
 <Tabs>
     <Tab label="Degree Validation" />
@@ -44,6 +52,7 @@
             formatted_reqs={formatted_reqs}
             curriculum_year={"C.Y. 2021 B.S."}
             bind:reassign={reassign}
+            on:working={update_working}
         />
       </TabContent>
       <TabContent>

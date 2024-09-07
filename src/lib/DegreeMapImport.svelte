@@ -7,7 +7,6 @@
     let text_input = "";
     let split_string=[];
     export let course_semester = []
-    export let uncounted_courses = []
 
     let r_course_block = /[A-Z]{2,4}\s[0-9]{2,4}W?\s*.*\s*[A-Z\-][A-Z\-\+]?\s*\(?[0-9]\)?\s*[A-Z][a-z]*\s[0-9]{4}/g;
     
@@ -81,6 +80,7 @@
     >Import Data
 </Button>
 <br/>
+<h3> Courses Found </h3>
 {#each split_string as s}
 {s} <br/>
 {/each}

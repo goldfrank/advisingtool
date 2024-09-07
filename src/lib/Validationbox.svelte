@@ -56,8 +56,9 @@
         display: inline-block; 
         position:relative; 
         top: 0.6em; 
-        min-width: 5rem;
+        min-width: 6rem;
         margin-left: 0.5rem;
+        text-align: center;
     }
     .req-wrap {
         border: 1px;
@@ -79,7 +80,7 @@
     <div class="validation-box">
         <ComboBox 
         size=sm
-        placeholder="Select Course"
+        placeholder="Find Course"
         items = {courses}
         selectedId = {selectedId}
         {shouldFilterItem}
@@ -91,11 +92,3 @@
         </div>
     </div>
 </div>
-
-<!-- notes for styling
-.bx--text-input:disabled {}
-background-color
--webkit-text-fill-color
-color
-cursor: not-allowed;
--->
