@@ -49,7 +49,7 @@ electives = setRemove(electives, bulletin_exceptions)
 manually_chosen_exceptions = ["BME 2820", "BME 2825", "DNSC 4211", "ECE 1120", "EMSE 4571", "EMSE 4574", "GEOG 4308", "INFR 4103", "ISTM 3119"]
 electives = setRemove(electives, manually_chosen_exceptions)
 
-poorvi_exceptions = ["UW 1099", "ECON 1001"]
+poorvi_exceptions = ["ECON 1001"] # "UW 1099" 
 electives = setRemove(electives, poorvi_exceptions)
 
 # electives are similar in requirements to NTT, but they do allow you to take additional CS courses (with some restrictions)
