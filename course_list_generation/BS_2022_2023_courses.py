@@ -29,5 +29,6 @@ possible_courses["elective_6"] = electives
 possible_courses["elective_7"] = electives
 possible_courses["elective_8"] = electives
 
+result = {"requirements": possible_courses}
 with open("possible_courses_BS_2022_2023.json", "w") as fp: 
-	json.dump(possible_courses , fp) 
+	json.dump(result , fp) 

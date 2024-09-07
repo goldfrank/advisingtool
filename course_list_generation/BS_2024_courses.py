@@ -15,5 +15,6 @@ possible_courses["gpac_1"] = long_gpac_cleaned
 possible_courses["gpac_2"] = long_gpac_cleaned
 possible_courses["gpac_3"] = long_gpac_cleaned
 
+result = {"requirements": possible_courses}
 with open("possible_courses_BS_2024.json", "w") as fp: 
-	json.dump(possible_courses , fp) 
+	json.dump(result , fp) 
