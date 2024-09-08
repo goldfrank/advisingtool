@@ -1,9 +1,12 @@
 <script>
     //@ts-nocheck
+    
     import Validationbox from "$lib/Validationbox.svelte";
     import _ from "lodash";
     import { createEventDispatcher } from 'svelte';
     import { pretty_slots } from "$lib/pretty_slots.json"
+    
+
     
     export let formatted_reqs = [];
     export let course_details = [];

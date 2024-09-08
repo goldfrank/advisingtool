@@ -2,14 +2,23 @@
     //@ts-nocheck
     import { TextArea } from "carbon-components-svelte";
     import { Button } from "carbon-components-svelte";
+    import { ProgressBar } from "carbon-components-svelte";
     import { createEventDispatcher } from 'svelte';
 
     let text_input = "";
     let split_string=[];
     export let course_semester = []
+    let loading = false;
+    let loaded = false;
 
     let r_course_block = /[A-Z]{2,4}\s[0-9]{2,4}W?\s*.*\s*[A-Z\-][A-Z\-\+]?\s*\(?[0-9]\)?\s*[A-Z][a-z]*\s[0-9]{4}/g;
-    
+
+    function click_load() {
+        loading = true;
+        setTimeout(click_handle(), 50);
+    }
+
+
     function click_handle(){
         if (text_input) {
             course_semester = []
@@ -39,7 +48,10 @@
             let cleaned_courses = clean_courses(course_semester)
             course_semester = cleaned_courses[0]
             data_import(course_semester)
+            loaded = true;
+            
         }
+        loading = false;
     }
 
     function clean_courses(course_semester) {course_semester
@@ -76,11 +88,15 @@
 </div>
 <br/>
 <Button     
-    on:click={click_handle}
+    on:click={click_load}
     >Import Data
 </Button>
 <br/>
-<h3> Courses Found </h3>
-{#each split_string as s}
-{s} <br/>
-{/each}
+{#if loading}
+<ProgressBar helperText="Loading..." />
+{:else if loaded}
+    <h3> Courses Found </h3>
+    {#each split_string as s}
+    {s} <br/>
+    {/each}
+{/if}
