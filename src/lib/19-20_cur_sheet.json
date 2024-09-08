@@ -1,0 +1,11 @@
+{"semesters": [
+        ["cs1010", "cs1111", "calc_1", "seas1001", "uw1020", "gened_ss_1"],
+        ["cs1112", "cs1311", "calc_2", "sci_seq_1", "gened_ss_2"],
+        ["cs2113", "cs2312", "cs_architecture", "sci_seq_2", "gened_hum"],
+        ["cs2501", "cs2541W", "cs3313", "cs3410","stats", "sci_2"],
+        ["cs3212", "cs3411", "cs_tech_track_2113_1", "seas_hss_1"],
+        ["cs_tech_track_2113_2","elective_1", "linear_alg", "elective_2", "seas_hss_2"],
+        ["cs4243W", "cs_tech_track_core_1", "elective_3", "elective_4", "seas_hss_3"],
+        ["cs4244","cs_tech_track_core_2", "ntt_1", "ntt_2", "ntt_3"]
+    ]
+}

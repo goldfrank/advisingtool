@@ -1,58 +1,19 @@
 <script>
     //@ts-nocheck
-    import Validationbox from "./Validationbox.svelte";
+    import Validationbox from "$lib/Validationbox.svelte";
     import _ from "lodash";
     import { createEventDispatcher } from 'svelte';
+    import { pretty_slots } from "$lib/pretty_slots.json"
     
     export let formatted_reqs = [];
     export let course_details = [];
     export let curriculum_year = "21";
 
+    // Prettify Display (eventually JSON/config per CY?)
+    
+    
+    // Handle dispatch
     const dispatch = createEventDispatcher();
-
-    const pretty_slots = {
-        "seas1001": "SEAS 1001",
-        "cs1010": "CSCI 1010",
-        "cs1111": "CSCI 1111",
-        "cs1112": "CSCI 1112",
-        "cs2113": "CSCI 2113",
-        "cs_architecture": "Architecture",
-        "cs1311": "CSCI 1311",
-        "calc_1": "Calculus I",
-        "calc_2": "Calculus II",
-        "uw1020": "UW 1020",
-        "cs2312": "CSCI 2312",
-        "cs2501": "CSCI 2501",
-        "cs2541W": "CSCI 2541W",
-        "cs3212": "CSCI 3212",
-        "cs3313": "CSCI 3313",
-        "cs3410": "CSCI 3410",
-        "cs3411": "CSCI 3411",
-        "cs4243W": "Capstone I",
-        "cs4244": "Capstone II",
-        "cs_tech_track_2113_1": "Tech Track I",
-        "cs_tech_track_2113_2": "Tech Track II",
-        "cs_tech_track_core_1": "Tech Track (Core) I",
-        "cs_tech_track_core_2": "Tech Track (Core) II",
-        "stats": "Statistics",
-        "linear_alg": "Linear Algebra",
-        "gened_ss_1": "GenEd (SS) I",
-        "gened_ss_2": "GenEd (SS) II",
-        "gened_hum": "GenEd (Hum)",
-        "sci_seq_1": "Science I",
-        "sci_seq_2": "Science II",
-        "sci_2": "Science III",
-        "seas_hss_1": "SEAS HSS I",
-        "seas_hss_2": "SEAS HSS II",
-        "seas_hss_3": "SEAS HSS III",
-        "ntt_1": "Non-Tech Track I",
-        "ntt_2": "Non-Tech Track II",
-        "ntt_3": "Non-Tech Track III",
-        "elective_1": "Elective I",
-        "elective_2": "Elective II",
-        "elective_3": "Elective III",
-        "elective_4": "Elective IV"
-    }
 
 	function working(finished) {
         dispatch('working', finished);
@@ -60,7 +21,7 @@
     
 
     
-
+    // What slot assignments are possible for each course?
     function possible_assignments(target_course) {
         let reqs = [];
         for (let req in formatted_reqs){
@@ -73,6 +34,7 @@
         return reqs.reverse()
     }
 
+    // Pregenerate table of possible assignments per course
     function generate_assign_table(){
         let possible_assign_table = {};
         console.log("populating table")
@@ -89,37 +51,31 @@
                 }
                 possible_assign_table[target_course] = reqs.reverse()
             } 
-        console.log(possible_assign_table)
         return possible_assign_table
     }
 
-    // function check_collection(assignments, collection) {
-    //     let was_reached = false;
-    //     for (let prior_assignments of collection) {
-    //         if (_.isEqual(prior_assignments, assignments)) {
-    //             was_reached = true;
-    //         }
-    //     }
-    //     return was_reached
-    // }
-
+    // Prune courses that can't go in any slot
+    // Sort courses by number of slots they can occupy
     function sort_and_prune(course_details) {
         let new_course_details = []
         for (let c in course_details) {
+            //count
             if (course_details[c].length < 5) {
                 course_details[c][4] = possible_assignments(course_details[c][0]).length
             }
+            //prune
             if (course_details[c][4] > 0) {
                 new_course_details.push(course_details[c])
             }
             else{
-                console.log("Pruning", course_details[c])
             }
             
         }
+        //sort and return
         return _.sortBy(new_course_details, [(o) => o[4]]).reverse()
     }
 
+    // Special checks for each curriculum year
     function cy_checks(assignments, candidate_assignments, course, possible_slot, cy) {
         if (cy == "C.Y. 2021 B.S.") {
             // check 1-credit general electives
@@ -148,6 +104,7 @@
         return true
     }
 
+    // expand current assignments (node)
     function expand(assignments, table) {
         // generate all successor assignments
         let candidate_assignments = Object.assign({}, assignments);
@@ -157,15 +114,13 @@
                 for (let possible_slot of table[course[0]]) {
                     if (! Object.values(candidate_assignments).includes(possible_slot)) {
                         candidate_assignments[course_str] = possible_slot;
-                        if (!( JSON.stringify(candidate_assignments) in frontier_dict )) {
+                        if (!( (JSON.stringify(candidate_assignments) in frontier_dict) && (JSON.stringify(candidate_assignments) in reached_dict) )) {
                             if (cy_checks(assignments, candidate_assignments, course, possible_slot, curriculum_year)) {
                                 frontier.push(candidate_assignments)
                                 frontier_dict[JSON.stringify(candidate_assignments)] = true;
-                                
-                            }
-                            
-                            candidate_assignments = Object.assign({}, assignments);   
-                            
+                                reached_dict[JSON.stringify(candidate_assignments).replace(/\_[0-9]\"/g,"\"")] = true;
+                            }                            
+                            candidate_assignments = Object.assign({}, assignments);                
                         }
                     }
                 }
@@ -176,7 +131,7 @@
     let min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);  
     let frontier = [];
     let frontier_dict = {}
-    let reached = {};
+    let reached_dict = {};
     let unused = [];
 
     
@@ -188,24 +143,23 @@
         let assignments = {}; // course#semester: slot
         let best_assignments = {}
         expand(assignments, table);
-        console.log("first frontier:", frontier)
-        console.log("first frontier dict:", frontier_dict)
         let k = 0
-        while (true && min_score > min_possible_score && k < 1001 && frontier.length > 0) {
+        while (true && min_score > min_possible_score && k < 100 && frontier.length > 0) {
             assignments = frontier.pop();
             delete frontier_dict[JSON.stringify(assignments)]
             // reached.push(assignments)
             score = formatted_reqs.length-Object.keys(assignments).length;
             expand(assignments, table);
+            // prevent cycling amongst equivalent solns
+            if (score == min_score)  {
+                k++
+            }
             if (score < min_score) {
                 k = 0
                 min_score = score;
                 best_assignments = Object.assign({}, assignments);
-                console.log(score, best_assignments)
             }
-            if (score == min_score) {
-                k++;
-            }
+            
         }
         working(true)
         return(best_assignments)
@@ -220,20 +174,18 @@
         course_details = Object.assign({}, course_details_update);
         course_details = sort_and_prune(course_details)
         let assign_table = generate_assign_table();
-        console.log("sorted course list", course_details)
         final_assignments = assign_courses(assign_table);
         for (let k of Object.keys(final_assignments)) {
             swapped_assignments[final_assignments[k]] =k;
         }
-        console.log("Swapped", swapped_assignments)
         unused = find_unused(course_details_update, final_assignments);
-        console.log(unused)
+        console.log("Unused Courses", unused)
+        return [final_assignments, swapped_assignments, course_details, unused]
 
     }
 
     function find_unused(course_details, assignments) {
         let unused = [];
-        console.log("course details", course_details)
         for (let course of course_details) {
             let used = false;
             for (let assignment of Object.keys(assignments)) {
@@ -272,7 +224,7 @@
         return "None"
     }
 
-    console.log("Done!")
+    console.log("course details", course_details)
 
 
 </script>
@@ -290,7 +242,7 @@
 <h3>Not Used</h3>
 {#each unused as unused_course}
     {unused_course[0].match(/[a-z]*/)[0].toUpperCase()}
-    {unused_course[0].match(/[0-9]{4}/)}
+    {unused_course[0].match(/[0-9]{2,4}[wW]?/)[0].toUpperCase()}
     {unused_course[1].match(/[a-z]*/)[0][0].toUpperCase() + unused_course[1].match(/[a-z]*/)[0].slice(1)}
     {unused_course[1].match(/[0-9]{2,4}/)}
     <br/>

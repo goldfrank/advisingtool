@@ -14,6 +14,7 @@
         if (text_input) {
             course_semester = []
             split_string = text_input.match(r_course_block)
+            let gpa = text_input.match(/Banner\ GPA\s*[0-4]\.[0-9]{2}/)[0].split("\n\n")[1]
             let course_strings = []
             for (let substring of split_string){
                 course_strings.push(substring.replace(/(\r\n|\n|\r)/gm, ""));
@@ -35,7 +36,6 @@
                     course_semester.push([course_id, semester, grade, credits])
                 }
             }
-            // course_semester = course_semester
             let cleaned_courses = clean_courses(course_semester)
             course_semester = cleaned_courses[0]
             data_import(course_semester)

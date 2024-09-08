@@ -22,7 +22,7 @@
         instructions_text = "Ensure input is one course per line!"
         let lines = text_input.split("\n")
         for (let line of lines) {
-            let course_id = line.match(/[a-zA-Z]*/)[0].toLowerCase() + line.match(/[0-9]{2,4}/)[0]
+            let course_id = line.match(/[a-zA-Z]*/)[0].toLowerCase() + line.match(/[0-9]{2,4}[wW]?/)[0].toLowerCase()
             let grade = "--"
             let credits = "3"
             if (line.includes("(")) {
@@ -31,7 +31,7 @@
             new_courses.push([course_id, semester.toLowerCase().replace(/\s/g, ''), grade, credits])
         }
         instructions_text = "Courses added!"
-        console.log(new_courses)
+        console.log("New courses:", new_courses)
         courses_added(new_courses)
     }
 </script>
