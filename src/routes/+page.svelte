@@ -76,6 +76,17 @@
     console.log(course_semester)
 
 </script>
+
+<style>
+    .main {
+        margin-left: 15rem;
+        margin-top: 3rem;
+    }
+    
+    
+</style>
+
+<div class="main">
 <h1>{header_emoji}</h1>
 {subtext}
 <br/>
@@ -112,7 +123,7 @@
       </TabContent>
     </svelte:fragment>
   </Tabs>
-  
+</div>
 
 
 <br/>

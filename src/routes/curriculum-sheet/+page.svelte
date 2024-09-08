@@ -79,6 +79,12 @@
 </script>
 
 <style>
+    .main {
+        margin-left: 2rem;
+        margin-right: 2rem;
+        margin-top: 1rem;
+    }
+    
     .header {
         max-width: 90%;
         margin: auto;
