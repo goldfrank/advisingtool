@@ -90,3 +90,17 @@ possible_courses["calc_1"] = getFullNameFromNum(all_courses, ["MATH 1231", "MATH
 possible_courses["calc_2"] = getFullNameFromNum(all_courses, ["MATH 1232"])
 
 possible_courses["uw1020"] = getFullNameFromNum(all_courses, ["UW 1020", "HONR 1015"])
+
+# takes Kinga's format and converts it so something Joe's front end plays nicely with
+def reformatForFrontEnd(possible_courses):
+	dictionary = {"requirements":[]}
+	for k in possible_courses.keys():
+		req = {"req":k}
+		req["courses"] = []
+		for course in possible_courses[k]:
+			course_num = course.split("#")[0]
+			course_desc = course.split("#")[1]
+			course_dict = {"id":k,"text":course_num+" "+course_desc,"num":course_num,"desc":course_desc}
+			req["courses"].append(course_dict)
+
+	return dictionary
