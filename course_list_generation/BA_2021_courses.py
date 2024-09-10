@@ -6,6 +6,7 @@ from course_list_imports import *
 # CS BA courses ##################################################################################################
 
 possible_courses["cs2441W"] = getFullNameFromNum(all_courses, ["CSCI 2441W", "CSCI 2541W"])
+possible_courses["cs_architecture"] = getFullNameFromNum(all_courses, ["CSCI 3401", "CSCI 2461", "CSCI 2460"])
 
 possible_courses["cs_tech_track_2113_1"] = getFullNameFromNum(all_courses, cs_tt_2113_prereq)
 possible_courses["cs_tech_track_2113_2"] = possible_courses["cs_tech_track_2113_1"]
@@ -52,3 +53,20 @@ possible_courses["elective_12"] = electives
 result = {"requirements": possible_courses}
 with open("possible_courses_BA_2021.json", "w") as fp: 
 	json.dump(result , fp) 
+
+big_dict = reformatForFrontEnd(possible_courses)
+big_dict["degree"] = "BA 2021-2022"
+semesters = [
+        ["cs1010", "cs1111", "calc_1", "seas1001", "uw1020", "gened_ss_1"],
+        ["cs1112", "cs1311", "calc_2", "sci_1", "gened_ss_2"],
+        ["cs2113", "elective_1", "sci_2", "stats", "gened_hum_1"],
+        ["cs2441W", "cs_architecture", "sci_3", "elective_2","gened_hum_2"],
+        ["cs_tech_track_short_1", "elective_3", "elective_4", "elective_5", "gened_arts"],
+        ["cs_tech_track_short_1", "gened_global_1", "elective_6", "elective_7", "gened_hum_3"],
+        ["cs_tech_track_2113_1", "cs_tech_track_2113_2", "elective_8", "elective_9", "gened_global_1"],
+        ["cs_tech_track_2113_3", "elective_10", "elective_11", "elective_12", "gened_hum_4"]
+    ]
+big_dict["semesters"] = semesters
+
+with open("BA_2021-2022.json", "w") as fp: 
+	json.dump(big_dict , fp) 
