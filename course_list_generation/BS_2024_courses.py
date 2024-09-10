@@ -32,5 +32,6 @@ semesters = [
         ["cs4244","elective_5", "elective_6", "elective_7", "elective_8"]
     ]
 big_dict["semesters"] = semesters
+
 with open("BS_2024-2025.json", "w") as fp: 
 	json.dump(big_dict , fp) 

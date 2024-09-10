@@ -102,5 +102,6 @@ def reformatForFrontEnd(possible_courses):
 			course_desc = course.split("#")[1]
 			course_dict = {"id":k,"text":course_num+" "+course_desc,"num":course_num,"desc":course_desc}
 			req["courses"].append(course_dict)
-
+		dictionary["requirements"].append(req)
+	#print(dictionary)
 	return dictionary
