@@ -40,7 +40,7 @@
   <TextInput labelText="GPA" placeholder="Enter GPA" 
     bind:value={gpa}/>
   <br/>
-  <ClickableTile href="/curriculum-sheet"
+  <ClickableTile href="./curriculum-sheet"
     on:click={(e) => generate_form(e)}
     >
     Generate Curriculum Sheet

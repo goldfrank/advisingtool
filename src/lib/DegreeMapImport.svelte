@@ -23,32 +23,37 @@
         if (text_input) {
             course_semester = []
             split_string = text_input.match(r_course_block)
-            let gpa = text_input.match(/Banner\ GPA\s*[0-4]\.[0-9]{2}/)[0].split("\n\n")[1]
-            let course_strings = []
-            for (let substring of split_string){
-                course_strings.push(substring.replace(/(\r\n|\n|\r)/gm, ""));
-            }
-            for (let course_string of course_strings) {
-                let split_course = course_string.split("\t");
-                let course_id = split_course[0].toLowerCase().replace(" ","");
-                let grade= split_course[2];
-                let credits = split_course[3];
-                let semester= split_course[4].toLowerCase().replace(" ","")
-                //handle duplicates
-                let duplicate = false;
-                for (let existing_course of course_semester) {
-                    if ((existing_course[0] == course_id && existing_course[1] == semester)) {
-                        duplicate = true;
+            // console.log(split_string)
+            if (split_string !== null) {
+                let course_strings = []
+                for (let substring of split_string){
+                    // console.log([substring])
+                    // course_strings.push(substring.replace(/(\r\n|\n|\r)/gm, ""));
+                    course_strings.push(substring.replace(/(\n\t\n\n)/gm, "\n"));
+                }
+                for (let course_string of course_strings) {
+                    console.log(course_string)
+                    let split_course = course_string.split("\n");
+                    let course_id = split_course[0].toLowerCase().replace(" ","");
+                    let grade= split_course[2];
+                    let credits = split_course[3];
+                    let semester= split_course[4].toLowerCase().replace(" ","")
+                    //handle duplicates
+                    let duplicate = false;
+                    for (let existing_course of course_semester) {
+                        if ((existing_course[0] == course_id && existing_course[1] == semester)) {
+                            duplicate = true;
+                        }
+                    }
+                    if (! duplicate) {
+                        course_semester.push([course_id, semester, grade, credits])
                     }
                 }
-                if (! duplicate) {
-                    course_semester.push([course_id, semester, grade, credits])
-                }
+                let cleaned_courses = clean_courses(course_semester)
+                course_semester = cleaned_courses[0]
+                data_import(course_semester)
+                loaded = true;
             }
-            let cleaned_courses = clean_courses(course_semester)
-            course_semester = cleaned_courses[0]
-            data_import(course_semester)
-            loaded = true;
             
         }
         loading = false;
