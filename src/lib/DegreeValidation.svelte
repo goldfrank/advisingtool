@@ -140,7 +140,7 @@
     
     function assign_courses(table) {
         min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);
-        console.log("best possible score:", min_possible_score);
+        // console.log("best possible score:", min_possible_score);
         let min_score = formatted_reqs.length;
         let score = formatted_reqs.length;
         let assignments = {}; // course#semester: slot
@@ -183,7 +183,7 @@
         }
         unused = find_unused(course_details_update, final_assignments);
         console.log("Unused Courses", unused)
-        return [final_assignments, swapped_assignments, course_details, unused]
+        return [final_assignments, swapped_assignments, course_details, unused, formatted_reqs]
 
     }
 
@@ -227,7 +227,7 @@
         return "None"
     }
 
-    console.log("course details", course_details)
+    // console.log("course details", course_details)
 
 
 </script>
@@ -246,7 +246,7 @@
 {#each unused as unused_course}
     {unused_course[0].match(/[a-z]*/)[0].toUpperCase()}
     {unused_course[0].match(/[0-9]{2,4}[wW]?/)[0].toUpperCase()}
-    {unused_course[1].match(/[a-z]*/)[0][0].toUpperCase() + unused_course[1].match(/[a-z]*/)[0].slice(1)}
-    {unused_course[1].match(/[0-9]{2,4}/)}
+    <!-- {unused_course[1].match(/[a-z]*/)[0][0].toUpperCase() + unused_course[1].match(/[a-z]*/)[0].slice(1)} -->
+    <!-- {unused_course[1].match(/[0-9]{2,4}/)} -->
     <br/>
 {/each}

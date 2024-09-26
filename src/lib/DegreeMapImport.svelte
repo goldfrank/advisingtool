@@ -23,16 +23,13 @@
         if (text_input) {
             course_semester = []
             split_string = text_input.match(r_course_block)
-            // console.log(split_string)
+            
             if (split_string !== null) {
                 let course_strings = []
                 for (let substring of split_string){
-                    // console.log([substring])
-                    // course_strings.push(substring.replace(/(\r\n|\n|\r)/gm, ""));
                     course_strings.push(substring.replace(/(\n\t\n\n)/gm, "\n"));
                 }
                 for (let course_string of course_strings) {
-                    console.log(course_string)
                     let split_course = course_string.split("\n");
                     let course_id = split_course[0].toLowerCase().replace(" ","");
                     let grade= split_course[2];

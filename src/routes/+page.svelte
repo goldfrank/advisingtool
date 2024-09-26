@@ -16,7 +16,7 @@
     let header_emoji = "🧐 Degree Progress Validation Tool 🧐";
     let subtext = "";
 
-    let assignment_arr = [[],[],[],[]];
+    let assignment_arr = [[],[],[],[],[]];
 
     let course_semester = [];
     for (let req in formatted_reqs) {

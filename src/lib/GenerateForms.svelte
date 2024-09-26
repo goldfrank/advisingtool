@@ -9,10 +9,9 @@
   let gwid = "";
   let admit_date ="";
   let advisor = "";
-  let gpa = 0.0;
 
 	function generate_form(event) {
-        dispatch('generate_form', [student_name, gwid, admit_date, advisor, gpa]);
+        dispatch('generate_form', [student_name, gwid, admit_date, advisor]);
 	}
 
 
@@ -36,9 +35,6 @@
   <br/>
   <TextInput labelText="Advisor" placeholder="Enter Advisor" 
     bind:value={advisor}/>
-  <br/>
-  <TextInput labelText="GPA" placeholder="Enter GPA" 
-    bind:value={gpa}/>
   <br/>
   <ClickableTile href="./curriculum-sheet"
     on:click={(e) => generate_form(e)}

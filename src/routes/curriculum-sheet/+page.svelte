@@ -3,16 +3,25 @@
     import { semesters } from "$lib/19-20_cur_sheet.json"
     import { pretty_slots } from "$lib/pretty_slots.json"
 
-   let assignments;
-   let swapped_assignments;
-   let course_details;
-   let unused = [];
-   let sheet_data = {};
-   let student_name = "";
-   let gwid = "";
-   let admit_date = "";
-   let advisor = "";
-   let gpa = "";
+    let assignments;
+    let swapped_assignments;
+    let course_details;
+    let formatted_reqs = [];
+    let unused = [];
+    let sheet_data = {};
+    let student_name = "";
+    let gwid = "";
+    let admit_date = "";
+    let advisor = "";
+    let gpa = 0;
+    let tech_gpa = 0;
+    let grade_gpa = {"A": 4, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7, "C+": 2.3,
+                 "C": 2, "C-": 1.7, "D+": 1.3, "D": 1.0, "D-": 0.7, "F": 0.0};
+    let gpa_qp = 0;
+    let gpa_denom = 0;
+    let tech_gpa_qp = 0;
+    let tech_gpa_denom = 0;
+   
 
     export function generate_sheet(assignment_arr, extra){
         console.log("rx", assignment_arr)
@@ -25,8 +34,7 @@
         gwid = extra[1]
         admit_date = extra[2]
         advisor= extra[3]
-        gpa = extra[4]
-
+        formatted_reqs = assignment_arr[4]
         fill_sheet()
     }
 
@@ -46,16 +54,38 @@
                 if (slot in swapped_assignments) {
                     //course_id, semester, grade, credits
                     let course_id = swapped_assignments[slot].split("#")[0]
+                    let course_desc;
+                    for (let req of formatted_reqs) {
+                        if (req['req'] == slot) {
+                            for (let r_course of req['courses']) {
+                                if (r_course['id'] == course_id) {
+                                    course_desc = r_course['text']
+                                }
+                            }
+
+                        }
+                    }
                     let formatted_course_id = course_id.match(/[a-z]{2,4}/)[0].toUpperCase() + " " + course_id.match(/[0-9]{2,4}[wW]?/)
                     let semester = swapped_assignments[slot].split("#")[1]
                     let formatted_semester = semester.match(/[a-z]*/)[0][0].toUpperCase()+semester.match(/[a-z]*/)[0].slice(1)+semester.match(/[0-9]{4}/)
+                    formatted_semester = formatted_semester.match(/[A-Za-z]*/) + " " + formatted_semester.match(/[0-9]+/)
                     let grade_credits = course_detail(course_id, semester)
                     let grade = grade_credits[0]
                     let credits = grade_credits[1]
-                    sheet_data[slot] = [credits, formatted_course_id, grade, formatted_semester]
+                    if (grade in grade_gpa) {
+                        gpa_qp += grade_gpa[grade]*+credits
+                        gpa_denom += +credits
+                        if (course_id.match(/[a-z]{2,4}/)[0].toUpperCase() == 'CSCI') {
+                            tech_gpa_qp += grade_gpa[grade]*+credits
+                            tech_gpa_denom += +credits
+                        }
+                    }
+                    sheet_data[slot] = [credits, course_desc, grade, formatted_semester]
                 }
             }
         }
+        gpa = (gpa_qp/gpa_denom).toPrecision(3);
+        tech_gpa = (tech_gpa_qp/tech_gpa_denom).toPrecision(3);
     }
 
     function format_unused(course_arr) {
@@ -79,11 +109,7 @@
 </script>
 
 <style>
-    .main {
-        margin-left: 2rem;
-        margin-right: 2rem;
-        margin-top: 1rem;
-    }
+
     
     .header {
         max-width: 90%;
@@ -181,6 +207,12 @@
     </div>
     <div class='item'>
         Advisor: {advisor}
+    </div>
+    <div class='item'>
+        GPA: {gpa}
+    </div>
+    <div class='item'>
+        Technical GPA: {tech_gpa}
     </div>
 </div>
 
