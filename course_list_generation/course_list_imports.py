@@ -7,6 +7,11 @@ json_file.close()
 
 json_file = open("./all_GPAC_courses.json") 
 all_GPAC_courses = json.loads(json_file.read())
+
+for a in all_GPAC_courses:
+	all_GPAC_courses[a] = list(set(all_GPAC_courses[a])) # removes duplicates
+	print(all_GPAC_courses[a])
+
 json_file.close()
 #dict_keys(['Quantitative Reasoning in Mathematics or Statistics', 'Scientific Reasoning in Natural and/or Physical Lab Sciences', 'Critical Thinking in the Humanities', 'Critical Thinking, Quantitative Reasoning or Scientific Reasoning in the Social Sciences', 'Creative or Critical Thinking in the Arts', 'Global or Cross-Cultural Perspectives', 'Local/Civic Engagement', 'Oral Communication'])
 
@@ -101,7 +106,7 @@ def reformatForFrontEnd(possible_courses):
 			#print(course)
 			course_num = course.split("#")[0]
 			course_desc = course.split("#")[1]
-			course_dict = {"id":k,"text":course_num+" "+course_desc,"num":course_num,"desc":course_desc}
+			course_dict = {"id":course_num.lower().replace(" ",""),"text":course_num+" "+course_desc,"num":course_num,"desc":course_desc}
 			req["courses"].append(course_dict)
 		dictionary["requirements"].append(req)
 	#print(dictionary)

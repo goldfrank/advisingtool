@@ -1,7 +1,9 @@
 <script>
     // @ts-nocheck
     import Validationbox from "$lib/Validationbox.svelte"
-    import { requirements } from "$lib/19-20_requirements.json"
+    // import { requirements } from "$lib/19-20_requirements.json"
+    // import { requirements as requirements_1920 } from "$lib/BS_2019-2020.json"
+    import { requirements as requirements_2425 } from "$lib/BS_2024-2025.json"
     import _ from "lodash";
     import { Tabs, Tab, TabContent } from "carbon-components-svelte";
     import DegreeValidation from "$lib/DegreeValidation.svelte"
@@ -10,8 +12,11 @@
     import GenerateForms from "$lib/GenerateForms.svelte"
     import { generate_sheet} from "../curriculum-sheet/+page.svelte"
 
-    let formatted_reqs = requirements;
     let reassign;
+
+    let requirements = requirements_2425;
+    let formatted_reqs = requirements;
+    console.log("formatted reqs", formatted_reqs)
 
     let header_emoji = "🧐 Degree Progress Validation Tool 🧐";
     let subtext = "";

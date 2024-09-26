@@ -1,7 +1,9 @@
 <script>
     // @ts-nocheck
     import Validationbox from "$lib/Validationbox.svelte"
-    import { requirements } from "$lib/19-20_requirements.json"
+    //import { requirements } from "$lib/19-20_requirements.json"
+    import { requirements as requirements_2425 } from "$lib/BS_2024-2025.json"
+    import { requirements as requirements_1920 } from "$lib/BS_2019-2020.json"
     import _ from "lodash";
     import { Tabs, Tab, TabContent } from "carbon-components-svelte";
     import DegreeValidation from "$lib/DegreeValidation.svelte"
@@ -9,9 +11,26 @@
     import AddCourses from "$lib/AddCourses.svelte"
     import GenerateForms from "$lib/GenerateForms.svelte"
     import { generate_sheet} from "./curriculum-sheet/+page.svelte"
+    import { ComboBox } from "carbon-components-svelte";
 
+    function shouldFilterItem(item, value) {
+    if (!value) return true;
+    return item.text.toLowerCase().includes(value.toLowerCase());  
+    }
+
+
+    let all_requirements = {"B.S. 2024-2025": requirements_2425, "B.S. 2019-2020": requirements_1920}
+    let requirements = requirements_2425;
     let formatted_reqs = requirements;
     let reassign;
+
+    let reqs_filter = [];
+    for (let req_year in all_requirements) {
+        reqs_filter.push({'id': req_year, text: req_year})
+
+    }
+
+    console.log("formatted reqs", formatted_reqs)
 
     let header_emoji = "🧐 Degree Progress Validation Tool 🧐";
     let subtext = "";
@@ -23,7 +42,11 @@
         formatted_reqs[req]['courses'] = _.sortBy(formatted_reqs[req]['courses'], [(o) => o['id']])
     }
     
-    
+    function updateRequirements(event){
+        console.log(event.detail.selectedId)
+        formatted_reqs = all_requirements[event.detail.selectedId]
+    }
+
     function handle_import(event) {
         course_semester = event.detail;
         console.log("course data:", course_semester)
@@ -90,6 +113,18 @@
 <h1>{header_emoji}</h1>
 {subtext}
 <br/>
+<h3>Curriculum:</h3>
+
+<div style="max-width: 55%">
+    <ComboBox
+  titleText="Contact"
+  placeholder="Select contact method"
+  items={reqs_filter}
+  on:select={updateRequirements}
+  {shouldFilterItem}
+/>
+
+</div>
 <Tabs>
     <Tab label="Degree Validation" />
     <Tab label="Import Data" />

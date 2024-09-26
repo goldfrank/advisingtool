@@ -11,6 +11,7 @@ long_gpac = all_GPAC_courses['Critical Thinking in the Humanities'] + all_GPAC_c
 			all_GPAC_courses['Creative or Critical Thinking in the Arts'] + all_GPAC_courses['Global or Cross-Cultural Perspectives'] + \
 			all_GPAC_courses['Local/Civic Engagement'] + all_GPAC_courses['Oral Communication']
 long_gpac_cleaned = getFullNameFromNum(all_courses, long_gpac)
+long_gpac_cleaned = list(set(long_gpac_cleaned))
 possible_courses["gpac_1"] = long_gpac_cleaned
 possible_courses["gpac_2"] = long_gpac_cleaned
 possible_courses["gpac_3"] = long_gpac_cleaned

@@ -4,9 +4,7 @@
     import Validationbox from "$lib/Validationbox.svelte";
     import _ from "lodash";
     import { createEventDispatcher } from 'svelte';
-    import { pretty_slots } from "$lib/pretty_slots.json"
-    
-
+    import { pretty_slots } from "$lib/pretty_slots.json" 
     
     export let formatted_reqs = [];
     export let course_details = [];
@@ -232,7 +230,6 @@
 
 </script>
 
-<h3>{curriculum_year} Curriculum</h3>
 {#each formatted_reqs as req}
     <Validationbox
     requirementName = {pretty_slots[req['req']]}

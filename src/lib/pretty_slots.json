@@ -29,7 +29,7 @@
     "gened_hum": "GenEd (Hum)",
     "sci_seq_1": "Science I",
     "sci_seq_2": "Science II",
-    "sci_2": "Science III",
+    "sci_3": "Science III",
     "seas_hss_1": "SEAS HSS I",
     "seas_hss_2": "SEAS HSS II",
     "seas_hss_3": "SEAS HSS III",
@@ -39,5 +39,16 @@
     "elective_1": "Elective I",
     "elective_2": "Elective II",
     "elective_3": "Elective III",
-    "elective_4": "Elective IV"
+    "elective_4": "Elective IV",
+    "elective_5": "Elective V",
+    "elective_6": "Elective VI",
+    "elective_7": "Elective VII",
+    "elective_8": "Elective VIII",
+    "ethics": "Ethics",
+    "gpac_1": "GPAC I",
+    "gpac_2": "GPAC II",
+    "gpac_3": "GPAC III",
+    "cs_tech_track_4000_1": "Technical Elective I",
+    "cs_tech_track_4000_2": "Technical Elective II",
+    "cs_tech_track_4000_3": "Technical Elective III"
 }}
