@@ -1,16 +1,18 @@
 import json
 
+def dedup(courses_dict):
+	for a in courses_dict:
+		courses_dict[a] = list(set(courses_dict[a])) # removes duplicates
+
 # get the latest courses lists generated via bulletin_scraper.py
 json_file = open("./all_courses.json") 
 all_courses = set(json.loads(json_file.read()))
 json_file.close()
+dedup(all_courses)
 
 json_file = open("./all_GPAC_courses.json") 
 all_GPAC_courses = json.loads(json_file.read())
-
-for a in all_GPAC_courses:
-	all_GPAC_courses[a] = list(set(all_GPAC_courses[a])) # removes duplicates
-	print(all_GPAC_courses[a])
+dedup(all_GPAC_courses)
 
 json_file.close()
 #dict_keys(['Quantitative Reasoning in Mathematics or Statistics', 'Scientific Reasoning in Natural and/or Physical Lab Sciences', 'Critical Thinking in the Humanities', 'Critical Thinking, Quantitative Reasoning or Scientific Reasoning in the Social Sciences', 'Creative or Critical Thinking in the Arts', 'Global or Cross-Cultural Perspectives', 'Local/Civic Engagement', 'Oral Communication'])
@@ -18,10 +20,12 @@ json_file.close()
 json_file = open("./exceptions.json") 
 exceptions = set(json.loads(json_file.read()))
 json_file.close()
+dedup(exceptions)
 
 json_file = open("./cs_offerings.json") 
 cs_offerings = set(json.loads(json_file.read()))
 json_file.close()
+dedup(cs_offerings)
 
 def getFullNameFromNum(all_courses, manual):
 	cleaned_manual = []
