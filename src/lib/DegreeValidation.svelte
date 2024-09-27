@@ -239,7 +239,7 @@
     }
 
     function credits_grade(){
-        console.log(course_details)
+        // console.log(course_details)
         return ["A", "3"]
     }
 
@@ -255,6 +255,7 @@
     selectedId = {course_if_exists(swapped_assignments, req)}
     on:cleared={courseCleared}
     on:selected={courseSelected}
+    on:changeSemester
     />
 {/each}
 <br/><br/>

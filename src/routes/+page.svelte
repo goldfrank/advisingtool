@@ -100,7 +100,7 @@
 
     function add_selected_course(event) {
         if (event.detail[2] == "None") {
-            console.log(event)
+            // console.log(event)
             let slot = event.detail[0]
             let course = event.detail[1]
             let course_str = course+"#"+current_semester
@@ -129,6 +129,24 @@
     }
 
     console.log(course_semester)
+
+    function updateSemester(event){
+        let course = event.detail[0]
+        let new_semester = event.detail[1]["selectedId"].toLowerCase().replace(" ","")
+        let slot = event.detail[2]['req']
+        let old_semester = event.detail[3].toLowerCase().replace(" ","")
+        for (let j = 0; j < course_semester.length; j++) {
+            if (course_semester[j][0] == course) {
+                course_semester[j][1] = new_semester
+            }
+        }
+        let course_str = course + "#" + new_semester
+        let old_course_str = course + "#" + old_semester
+        delete assignment_arr[0][old_course_str]
+        assignment_arr[0][course_str] = slot
+        assignment_arr[1][slot] = course_str
+        assignment_arr[2] = course_semester
+    }
 
 </script>
 
@@ -170,6 +188,7 @@
             bind:reassign={reassign}
             on:working={update_working}
             on:courseSelected={add_selected_course}
+            on:changeSemester={updateSemester}
         />
       </TabContent>
       <TabContent>

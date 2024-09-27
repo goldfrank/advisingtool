@@ -58,6 +58,10 @@
         // console.log("cleared", req['req']);
     }
 
+    function changeSemester(event){
+        dispatch("changeSemester",[selectedId, event.detail, req, semester]) //last item is *old* semester
+    }
+
 </script>
 
 <style>
@@ -133,6 +137,7 @@
             placeholder="Semester"
             items={possible_semesters}
             selectedId={semester}
+            on:select={changeSemester}
             />
         </div>
 
