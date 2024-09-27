@@ -238,9 +238,15 @@
         dispatch('courseSelected', [slot, course, semester]);
     }
 
-    function credits_grade(){
-        // console.log(course_details)
-        return ["A", "3"]
+    function credits_grade(course_details, course){
+        console.log("xok", course)
+        for (let item of course_details){
+            if (item[0] == course) {
+                console.log(item)
+                return [item[2], +item[3]]
+            }
+        }
+        return ["--", null]
     }
 
 </script>
@@ -250,7 +256,8 @@
     requirementName = {pretty_slots[req['req']]}
     courses={req['courses']}
     req={req}
-    credits={credits_grade()}
+    credits={credits_grade(course_details, course_if_exists(swapped_assignments, req))[1]}
+    grade={credits_grade(course_details, course_if_exists(swapped_assignments, req))[0]}
     semester={semester_if_exists(swapped_assignments, req)}
     selectedId = {course_if_exists(swapped_assignments, req)}
     on:cleared={courseCleared}

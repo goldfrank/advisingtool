@@ -148,6 +148,24 @@
         assignment_arr[2] = course_semester
     }
 
+    function updateGrade(event){
+        let course = event.detail[0]
+        let new_semester = event.detail[1]["selectedId"].toLowerCase().replace(" ","")
+        let slot = event.detail[2]['req']
+        let old_semester = event.detail[3].toLowerCase().replace(" ","")
+        for (let j = 0; j < course_semester.length; j++) {
+            if (course_semester[j][0] == course) {
+                course_semester[j][1] = new_semester
+            }
+        }
+        let course_str = course + "#" + new_semester
+        let old_course_str = course + "#" + old_semester
+        delete assignment_arr[0][old_course_str]
+        assignment_arr[0][course_str] = slot
+        assignment_arr[1][slot] = course_str
+        assignment_arr[2] = course_semester
+    }
+
 </script>
 
 <style>
@@ -184,7 +202,7 @@
         <DegreeValidation
             course_details={course_semester}
             formatted_reqs={formatted_reqs}
-            curriculum_year={"C.Y. 2021 B.S."}
+            curriculum_year={cur_year}
             bind:reassign={reassign}
             on:working={update_working}
             on:courseSelected={add_selected_course}

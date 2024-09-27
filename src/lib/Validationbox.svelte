@@ -18,6 +18,16 @@
     { id:"Spring 2025", text: "Spring 2025"}
     ]
 
+    let grade_gpa = {"A": 4, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7, "C+": 2.3,
+                 "C": 2, "C-": 1.7, "D+": 1.3, "D": 1.0, "D-": 0.7, "F": 0.0, "TR": null};
+
+    let grade_index = []
+
+    for (let [g, val] of Object.entries(grade_gpa)) {
+        grade_index.push({id: g, text: g})
+    }
+
+    let credit_index = [{id: 1, text: 1}, {id: 2, text: 2}, {id: 3, text: 3}, {id: 4, text: 4}, {id: 5, text: 5}]
 
     function shouldFilterItem(item, value) {
     if (!value) return true;
@@ -60,6 +70,10 @@
 
     function changeSemester(event){
         dispatch("changeSemester",[selectedId, event.detail, req, semester]) //last item is *old* semester
+    }
+
+    function changeGrade(event){
+        dispatch("changeSemester",[selectedId, event.detail])
     }
 
 </script>
@@ -145,7 +159,17 @@
             <ComboBox
             size=sm
             placeholder="Credits"
-            
+            items={credit_index}
+            selectedId={credits}
+            />
+        </div>
+
+        <div class="credits">
+            <ComboBox
+            size=sm
+            placeholder="Grade"
+            items={grade_index}
+            selectedId={grade}
             />
         </div>
 
