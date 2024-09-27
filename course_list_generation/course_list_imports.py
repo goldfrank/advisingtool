@@ -8,7 +8,7 @@ def dedup(courses_dict):
 json_file = open("./all_courses.json") 
 all_courses = set(json.loads(json_file.read()))
 json_file.close()
-dedup(all_courses)
+#dedup(all_courses)
 
 json_file = open("./all_GPAC_courses.json") 
 all_GPAC_courses = json.loads(json_file.read())
@@ -20,12 +20,12 @@ json_file.close()
 json_file = open("./exceptions.json") 
 exceptions = set(json.loads(json_file.read()))
 json_file.close()
-dedup(exceptions)
+#dedup(exceptions)
 
 json_file = open("./cs_offerings.json") 
 cs_offerings = set(json.loads(json_file.read()))
 json_file.close()
-dedup(cs_offerings)
+#dedup(cs_offerings)
 
 def getFullNameFromNum(all_courses, manual):
 	cleaned_manual = []
