@@ -9,9 +9,11 @@
   let gwid = "";
   let admit_date ="";
   let advisor = "";
+  export let semester;
 
 	function generate_form(event) {
-        dispatch('generate_form', [student_name, gwid, admit_date, advisor]);
+        console.log("sending", semester)
+        dispatch('generate_form', [student_name, gwid, admit_date, advisor, semester]);
 	}
 
 

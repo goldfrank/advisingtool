@@ -8,11 +8,10 @@
     
     export let formatted_reqs = [];
     export let course_details = [];
-    export let curriculum_year = "21";
+    export let curriculum_year = "B.S. 2019-2020";
 
-    // Prettify Display (eventually JSON/config per CY?)
-    
-    
+
+
     // Handle dispatch
     const dispatch = createEventDispatcher();
 
@@ -78,7 +77,7 @@
 
     // Special checks for each curriculum year
     function cy_checks(assignments, candidate_assignments, course, possible_slot, cy) {
-        if (cy == "C.Y. 2021 B.S.") {
+        if (cy == "B.S. 2019-2020") {
             // check 1-credit general electives
             if ((possible_slot.includes("elect") && (course[3].includes('1') || course[3].includes('2')) )) {
                 return false
@@ -227,6 +226,22 @@
 
     // console.log("course details", course_details)
 
+    function courseCleared(event){
+        let slot = event.detail;
+        dispatch('courseCleared', slot);
+    }
+
+    function courseSelected(event){
+        let slot = event.detail[0]
+        let course = event.detail[1]
+        let semester= event.detail[2]
+        dispatch('courseSelected', [slot, course, semester]);
+    }
+
+    function credits_grade(){
+        console.log(course_details)
+        return ["A", "3"]
+    }
 
 </script>
 
@@ -234,8 +249,12 @@
     <Validationbox
     requirementName = {pretty_slots[req['req']]}
     courses={req['courses']}
+    req={req}
+    credits={credits_grade()}
     semester={semester_if_exists(swapped_assignments, req)}
     selectedId = {course_if_exists(swapped_assignments, req)}
+    on:cleared={courseCleared}
+    on:selected={courseSelected}
     />
 {/each}
 <br/><br/>

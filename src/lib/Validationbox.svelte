@@ -5,6 +5,18 @@
     import { Button } from "carbon-components-svelte";
     import { Tile } from "carbon-components-svelte";
     
+    let possible_semesters = [{ id:"Fall 2021", text: "Fall 2021"},
+    { id:"Spring 2022", text: "Spring 2022"},
+    { id:"Summer 2022", text: "Summer 2022"},
+    { id:"Fall 2022", text: "Fall 2022"},
+    { id:"Spring 2023", text: "Spring 2023"},
+    { id:"Summer 2023", text: "Summer 2023"},
+    { id:"Fall 2023", text: "Fall 2023"},
+    { id:"Spring 2024", text: "Spring 2024"},
+    { id:"Summer 2024", text: "Summer 2024"},
+    { id:"Fall 2024", text: "Fall 2024"},
+    { id:"Spring 2025", text: "Spring 2025"}
+    ]
 
 
     function shouldFilterItem(item, value) {
@@ -13,22 +25,38 @@
     }
 
     export let courses;
+    export let req;
     export let selectedId = '';
     export let requirementName = "Requirement";
     export let semester = "Winter 2019";
+    export let credits;
+    export let grade;
 
     // console.log(courses)
 
 
     const dispatch = createEventDispatcher();
 
-	function selected(event) {
-		dispatch('selected', event.detail);
-	}
+	// function selected(event) {
+	// 	dispatch('selected', event.detail);
+	// }
 
-    function cleared(event) {
-		dispatch('cleared', event.detail);
-	}
+    // function cleared(event) {
+	// 	dispatch('cleared', event.detail);
+    //     console.log("cleared", req);
+	// }
+
+    function selectCourse(event){
+        selectedId = event.detail['selectedId']
+        dispatch('selected', [req['req'], selectedId, semester]);
+        // console.log('selected', [req['req'], selectedId]);
+        
+    }
+
+    function clearCourse(event){
+        dispatch('cleared', req['req']);
+        // console.log("cleared", req['req']);
+    }
 
 </script>
 
@@ -55,10 +83,20 @@
     .semester-name {
         display: inline-block; 
         position:relative; 
-        top: 0.6em; 
+        /* top: 0.6em;  */
         min-width: 6rem;
-        margin-left: 0.5rem;
+        /* margin-left: 0.5rem; */
         text-align: center;
+        width: 12rem;
+    }
+    .credits {
+        display: inline-block; 
+        position:relative; 
+        /* top: 0.6em;  */
+        min-width: 6rem;
+        /* margin-left: 0.5rem; */
+        text-align: center;
+        width: 8rem;
     }
     .req-wrap {
         border: 1px;
@@ -83,12 +121,27 @@
         placeholder="Find Course"
         items = {courses}
         selectedId = {selectedId}
+        on:select={selectCourse}
+        on:clear={clearCourse}
         {shouldFilterItem}
         />
     </div>
-    <div class="req-wrap">
+
         <div class="semester-name">
-            {semester}
+            <ComboBox
+            size=sm
+            placeholder="Semester"
+            items={possible_semesters}
+            selectedId={semester}
+            />
         </div>
-    </div>
+
+        <div class="credits">
+            <ComboBox
+            size=sm
+            placeholder="Credits"
+            
+            />
+        </div>
+
 </div>
