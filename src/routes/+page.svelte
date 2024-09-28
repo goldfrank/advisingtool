@@ -3,9 +3,15 @@
     import Validationbox from "$lib/Validationbox.svelte"
     //import { requirements } from "$lib/19-20_requirements.json"
     import { requirements as requirements_2425 } from "$lib/BS_2024-2025.json"
+    import { requirements as requirements_2324 } from "$lib/BS_2023-2024.json"
+    import { requirements as requirements_2223 } from "$lib/BS_2022-2023.json"
+    import { requirements as requirements_2122 } from "$lib/BS_2021-2022.json"
     import { requirements as requirements_1920 } from "$lib/BS_2019-2020.json"
     import { semesters as semesters_1920 } from "$lib/BS_2019-2020.json"
     import { semesters as semesters_2425 } from "$lib/BS_2024-2025.json"
+    import { semesters as semesters_2324 } from "$lib/BS_2023-2024.json"
+    import { semesters as semesters_2223 } from "$lib/BS_2022-2023.json"
+    import { semesters as semesters_2122 } from "$lib/BS_2021-2022.json"
     import _ from "lodash";
     import { Tabs, Tab, TabContent } from "carbon-components-svelte";
     import DegreeValidation from "$lib/DegreeValidation.svelte"
@@ -21,8 +27,18 @@
     }
 
 
-    let all_requirements = {"B.S. 2024-2025": requirements_2425, "B.S. 2019-2020": requirements_1920}
-    let all_semesters = {"B.S. 2024-2025": semesters_2425, "B.S. 2019-2020": semesters_1920}
+    let all_requirements = {"B.S. 2024-2025": requirements_2425,
+                            "B.S. 2023-2024": requirements_2324, 
+                            "B.S. 2022-2023": requirements_2223,
+                            "B.S. 2021-2022": requirements_2122,
+                            "B.S. 2019-2020": requirements_1920}
+    
+    let all_semesters = {"B.S. 2024-2025": semesters_2425,
+                         "B.S. 2023-2024": semesters_2324, 
+                         "B.S. 2022-2023": semesters_2223,
+                         "B.S. 2021-2022": semesters_2122,
+                         "B.S. 2019-2020": semesters_1920}
+    
     let requirements = requirements_2425;
     let formatted_reqs = requirements;
     formatted_reqs.sort((a, b) => a['courses'].length - b['courses'].length)
@@ -308,6 +324,8 @@
 <h1>{header_emoji}</h1>
 {subtext}
 <br/>
+<b>Public Alpha</b> -- 
+<a href="https://github.com/goldfrank/advisingtool">Bug reports and pull requests welcome!</a><br/>
 <div style="max-width: 60%"><em>This is an advising tool and is not a contract. It is intended for program progress tracking and is not considered an academic transcript, nor should it be used for official certification of academic records. It is the responsibility of each student to be aware of and understand the requirements of the selected degree or certificate program as posted in the University Bulletin. Students should contact their academic advisor for assistance in interpreting or verifying the accuracy of any information contained within this report. </em></div>
 <h3>Curriculum:</h3>
 
