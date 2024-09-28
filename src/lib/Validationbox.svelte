@@ -18,7 +18,7 @@
     { id:"Spring 2025", text: "Spring 2025"}
     ]
 
-    let grade_gpa = {"A": 4, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7, "C+": 2.3,
+    let grade_gpa = {"--": null, "A": 4, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7, "C+": 2.3,
                  "C": 2, "C-": 1.7, "D+": 1.3, "D": 1.0, "D-": 0.7, "F": 0.0, "TR": null};
 
     let grade_index = []
@@ -27,7 +27,7 @@
         grade_index.push({id: g, text: g})
     }
 
-    let credit_index = [{id: 1, text: 1}, {id: 2, text: 2}, {id: 3, text: 3}, {id: 4, text: 4}, {id: 5, text: 5}]
+    let credit_index = [{id: "1", text: 1}, {id: "2", text: 2}, {id: "3", text: 3}, {id: "4", text: 4}, {id: "5", text: 5}, {id: "(1)", text: "(1)"}, {id: "(2)", text: "(2)"}, {id: "(3)", text: "(3)"}, {id: "(4)", text: "(4)"}, {id: "(5)", text: "(5)"}] 
 
     function shouldFilterItem(item, value) {
     if (!value) return true;
@@ -38,42 +38,69 @@
     export let req;
     export let selectedId = '';
     export let requirementName = "Requirement";
-    export let semester = "Winter 2019";
+    export let semester;
     export let credits;
     export let grade;
+    let old_course = null;
+    let old_semester = null;
 
     // console.log(courses)
 
 
     const dispatch = createEventDispatcher();
 
-	// function selected(event) {
-	// 	dispatch('selected', event.detail);
-	// }
-
-    // function cleared(event) {
-	// 	dispatch('cleared', event.detail);
-    //     console.log("cleared", req);
-	// }
-
     function selectCourse(event){
-        selectedId = event.detail['selectedId']
-        dispatch('selected', [req['req'], selectedId, semester]);
-        // console.log('selected', [req['req'], selectedId]);
-        
+        dispatch('selected', [req['req'], selectedId, semester]);  
     }
 
-    function clearCourse(event){
-        dispatch('cleared', req['req']);
-        // console.log("cleared", req['req']);
-    }
-
-    function changeSemester(event){
-        dispatch("changeSemester",[selectedId, event.detail, req, semester]) //last item is *old* semester
-    }
-
-    function changeGrade(event){
-        dispatch("changeSemester",[selectedId, event.detail])
+    function changeCourse(type, event){
+        // console.log(type)
+        if (type == "selectCourse") {
+            old_course = selectedId;
+            selectedId = event.detail['selectedId']
+        }
+        if (type == "clearCourse") {
+            old_course = selectedId;
+            selectedId = null;
+            old_semester = semester;
+            semester = null;
+            credits = null;
+            grade = null;
+        }
+        if (type == "selectSemester") {
+            old_semester = semester;
+            old_course = null;
+            semester = event.detail['selectedId']
+        }
+        if (type == "clearSemester") {
+            old_semester = semester;
+            old_course = null;
+            semester = null;
+        }
+        if (type == "selectCredits") {
+            old_semester = null;
+            old_course = null;
+            credits = event.detail['selectedId']
+        }
+        if (type == "clearCredits") {
+            old_semester = null;
+            old_course = null;
+            credits = null;
+        }
+        if (type == "selectGrade") {
+            old_semester = null;
+            old_course = null;
+            grade = event.detail['selectedId']
+        }
+        if (type == "clearGrade") {
+            old_semester = null;
+            old_course = null;
+            grade = null
+        }
+        // console.log("Updated Course:", [selectedId, semester, credits, grade, req['req'], old_course])
+        if (type == "clearCourse" || selectedId) {
+            dispatch('changeCourse', {"req": req['req'], "course": selectedId,"semester": semester, "credits": credits, "grade": grade, "old_course": old_course, "old_semester": old_semester});
+        }
     }
 
 </script>
@@ -139,8 +166,8 @@
         placeholder="Find Course"
         items = {courses}
         selectedId = {selectedId}
-        on:select={selectCourse}
-        on:clear={clearCourse}
+        on:select={(e) => changeCourse('selectCourse', e)}
+        on:clear={(e) => changeCourse('clearCourse', e)}
         {shouldFilterItem}
         />
     </div>
@@ -151,7 +178,8 @@
             placeholder="Semester"
             items={possible_semesters}
             selectedId={semester}
-            on:select={changeSemester}
+            on:select={(e) => changeCourse('selectSemester', e)}
+            on:clear={(e) => changeCourse('clearSemester', e)}
             />
         </div>
 
@@ -161,6 +189,8 @@
             placeholder="Credits"
             items={credit_index}
             selectedId={credits}
+            on:select={(e) => changeCourse('selectCredits', e)}
+            on:clear={(e) => changeCourse('clearCredits', e)}
             />
         </div>
 
@@ -170,6 +200,8 @@
             placeholder="Grade"
             items={grade_index}
             selectedId={grade}
+            on:select={(e) => changeCourse('selectGrade', e)}
+            on:clear={(e) => changeCourse('clearGrade', e)}
             />
         </div>
 

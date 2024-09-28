@@ -43,11 +43,10 @@
     }
 
     function course_detail(course_id, semester) {
-        console.log("Course details:", course_id, semester)
-        console.log(course_details)
+        // console.log("Course details:", course_id, semester)
+        // console.log(course_details)
         for (let course_detail of course_details) {
             if ((course_detail[0] == course_id) && (course_detail[1] == semester)){
-                //grade credits
                 return [course_detail[2], course_detail[3]]
             }
         }
