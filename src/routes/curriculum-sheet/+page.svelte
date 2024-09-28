@@ -1,9 +1,10 @@
 <script context="module">
     //@ts-nocheck
-    import { semesters } from "$lib/19-20_cur_sheet.json"
+    // import { semesters } from "$lib/19-20_cur_sheet.json"
     import { pretty_slots } from "$lib/pretty_slots.json"
 
     let assignments;
+    let semesters;
     let swapped_assignments;
     let course_details;
     let formatted_reqs = [];
@@ -25,6 +26,7 @@
 
     export function generate_sheet(assignment_arr, extra){
         console.log("rx", assignment_arr)
+        console.log("rx2", extra)
         assignments = assignment_arr[0]
         swapped_assignments = assignment_arr[1]
         course_details = assignment_arr[2]
@@ -34,14 +36,17 @@
         gwid = extra[1]
         admit_date = extra[2]
         advisor= extra[3]
+        semesters = extra[4]
         formatted_reqs = assignment_arr[4]
+        console.log("semesters", semesters)
         fill_sheet()
     }
 
     function course_detail(course_id, semester) {
+        // console.log("Course details:", course_id, semester)
+        // console.log(course_details)
         for (let course_detail of course_details) {
             if ((course_detail[0] == course_id) && (course_detail[1] == semester)){
-                //grade credits
                 return [course_detail[2], course_detail[3]]
             }
         }

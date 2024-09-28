@@ -8,11 +8,10 @@
     
     export let formatted_reqs = [];
     export let course_details = [];
-    export let curriculum_year = "21";
+    export let curriculum_year = "B.S. 2019-2020";
 
-    // Prettify Display (eventually JSON/config per CY?)
-    
-    
+
+
     // Handle dispatch
     const dispatch = createEventDispatcher();
 
@@ -25,6 +24,7 @@
     // What slot assignments are possible for each course?
     function possible_assignments(target_course) {
         let reqs = [];
+        // console.log(formatted_reqs)
         for (let req in formatted_reqs){
             for (let course in formatted_reqs[req]['courses']) {
                 if (formatted_reqs[req]['courses'][course]['id'] == target_course) {
@@ -51,7 +51,9 @@
                     }        
                 }
                 possible_assign_table[target_course] = reqs.reverse()
-            } 
+            }
+        // console.log(possible_assign_table)
+        console.log("table populated")
         return possible_assign_table
     }
 
@@ -78,7 +80,7 @@
 
     // Special checks for each curriculum year
     function cy_checks(assignments, candidate_assignments, course, possible_slot, cy) {
-        if (cy == "C.Y. 2021 B.S.") {
+        if (cy == "B.S. 2019-2020") {
             // check 1-credit general electives
             if ((possible_slot.includes("elect") && (course[3].includes('1') || course[3].includes('2')) )) {
                 return false
@@ -137,6 +139,7 @@
 
     
     function assign_courses(table) {
+        console.log("sorted reqs:", formatted_reqs)
         min_possible_score = Math.max(formatted_reqs.length-course_details.length, 0);
         // console.log("best possible score:", min_possible_score);
         let min_score = formatted_reqs.length;
@@ -145,7 +148,7 @@
         let best_assignments = {}
         expand(assignments, table);
         let k = 0
-        while (true && min_score > min_possible_score && k < 100 && frontier.length > 0) {
+        while (true && min_score > min_possible_score && k < 500 && frontier.length > 0) {
             assignments = frontier.pop();
             delete frontier_dict[JSON.stringify(assignments)]
             // reached.push(assignments)
@@ -167,8 +170,8 @@
     }
 
 
-    let swapped_assignments = {}
-    let final_assignments = {};
+    export let swapped_assignments = {}
+    export let final_assignments = {};
     
     export function reassign(course_details_update) {
         working(false)
@@ -177,7 +180,7 @@
         let assign_table = generate_assign_table();
         final_assignments = assign_courses(assign_table);
         for (let k of Object.keys(final_assignments)) {
-            swapped_assignments[final_assignments[k]] =k;
+            swapped_assignments[final_assignments[k]] = k;
         }
         unused = find_unused(course_details_update, final_assignments);
         console.log("Unused Courses", unused)
@@ -209,10 +212,11 @@
                 let sem = x[k].split("#")[1];
                 let season = sem.split(/[0-9]{4}/)[0]
                 let year = sem.split(/.*(?=[0-9]{4})/)[1]
+                
                 return season.charAt(0).toUpperCase() + season.slice(1) + " " + year
             }
         }
-        return "None"
+        return null
     }
 
     function course_if_exists(x, req){
@@ -222,10 +226,20 @@
                 return x[k].split("#")[0]
             }
         }
-        return "None"
+        return null
     }
 
     // console.log("course details", course_details)
+
+
+    function credits_grade(course_details, course){
+        for (let item of course_details){
+            if (item[0] == course) {
+                return [item[2], item[3]]
+            }
+        }
+        return [null, null]
+    }
 
 
 </script>
@@ -234,8 +248,12 @@
     <Validationbox
     requirementName = {pretty_slots[req['req']]}
     courses={req['courses']}
+    req={req}
+    credits={credits_grade(course_details, course_if_exists(swapped_assignments, req))[1]}
+    grade={credits_grade(course_details, course_if_exists(swapped_assignments, req))[0]}
     semester={semester_if_exists(swapped_assignments, req)}
-    selectedId = {course_if_exists(swapped_assignments, req)}
+    selectedId={course_if_exists(swapped_assignments, req)}
+    on:changeCourse
     />
 {/each}
 <br/><br/>
