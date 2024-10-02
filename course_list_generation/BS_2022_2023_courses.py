@@ -17,6 +17,7 @@ for course in all_courses:
 			cs_num = cs_name.split(" ")[1]
 			if int(cs_num[:4]) >= 4000 and "CSCI "+cs_num in course:
 				cs_tt.append(course)
+cs_tt = list(set(cs_tt))
 possible_courses['cs_tech_track_4000_1'] = cs_tt
 possible_courses['cs_tech_track_4000_2'] = cs_tt
 possible_courses['cs_tech_track_4000_3'] = cs_tt

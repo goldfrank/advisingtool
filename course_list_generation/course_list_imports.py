@@ -1,6 +1,6 @@
 import json
 
-def dedup(courses_dict):
+def dedup_dict(courses_dict):
 	for a in courses_dict:
 		courses_dict[a] = list(set(courses_dict[a])) # removes duplicates
 
@@ -8,25 +8,25 @@ def dedup(courses_dict):
 json_file = open("./all_courses.json") 
 all_courses = set(json.loads(json_file.read()))
 json_file.close()
-#dedup(all_courses)
+all_courses = list(set(all_courses))
 
 json_file = open("./all_GPAC_courses.json") 
 all_GPAC_courses = json.loads(json_file.read())
-dedup(all_GPAC_courses)
-
+dedup_dict(all_GPAC_courses)
 json_file.close()
 #dict_keys(['Quantitative Reasoning in Mathematics or Statistics', 'Scientific Reasoning in Natural and/or Physical Lab Sciences', 'Critical Thinking in the Humanities', 'Critical Thinking, Quantitative Reasoning or Scientific Reasoning in the Social Sciences', 'Creative or Critical Thinking in the Arts', 'Global or Cross-Cultural Perspectives', 'Local/Civic Engagement', 'Oral Communication'])
 
 json_file = open("./exceptions.json") 
 exceptions = set(json.loads(json_file.read()))
 json_file.close()
-#dedup(exceptions)
+exceptions = list(set(exceptions))
 
 json_file = open("./cs_offerings.json") 
 cs_offerings = set(json.loads(json_file.read()))
 json_file.close()
-#dedup(cs_offerings)
+cs_offerings = list(set(cs_offerings))
 
+# gets all courses that match from 
 def getFullNameFromNum(all_courses, manual):
 	cleaned_manual = []
 	for mini in manual:
@@ -38,7 +38,7 @@ def getFullNameFromNum(all_courses, manual):
 				root = mini.split(" ")[0]
 				if root in course:
 					cleaned_manual.append(course)
-	return cleaned_manual
+	return list(set(cleaned_manual))
 
 def setRemove(original, delete):
 	new = []
@@ -48,7 +48,7 @@ def setRemove(original, delete):
 			new.append(long_course)
 		else:
 			print("deleted " + long_course)
-	return new
+	return list(set(new))
 
 electives = setRemove(all_courses, exceptions) # remove PCSC and PSIS courses from electives
 
@@ -103,7 +103,8 @@ possible_courses["uw1020"] = getFullNameFromNum(all_courses, ["UW 1020", "HONR 1
 # takes Kinga's format and converts it so something Joe's front end plays nicely with
 def reformatForFrontEnd(possible_courses):
 	dictionary = {"requirements":[]}
-	for k in possible_courses.keys():
+	keys = list(set(possible_courses.keys()))
+	for k in keys:
 		req = {"req":k}
 		req["courses"] = []
 		for course in possible_courses[k]:
