@@ -13,6 +13,7 @@
     import { semesters as semesters_2223 } from "$lib/BS_2022-2023.json"
     import { semesters as semesters_2122 } from "$lib/BS_2021-2022.json"
     import _ from "lodash";
+    import { ordering } from "$lib/pretty_slots.json" 
     import { Tabs, Tab, TabContent } from "carbon-components-svelte";
     import DegreeValidation from "$lib/DegreeValidation.svelte"
     import DegreeMapImport from "$lib/DegreeMapImport.svelte"
@@ -41,11 +42,16 @@
     
     let requirements = requirements_2425;
     let formatted_reqs = requirements;
+    console.log(formatted_reqs)
     formatted_reqs.sort((a, b) => a['courses'].length - b['courses'].length)
+    formatted_reqs.sort((a, b) => ordering[a['req']] >  ordering[b['req']])
+    // formatted_reqs.sort((a, b) => a['req'].split(/[a-zA-z_]+/) < b['req'].split(/[a-zA-z_]+/))
+    // formatted_reqs.sort((a, b) => (a['req'].match(/[0-9]+/) < b['req'].match(/[0-9]+/) && b['req'].match(/[0-9]+/) != null))
     let reassign;
     let final_assignments;
     let swapped_assignments;
     let semester = semesters_2425;
+    
     let cur_year = "B.S. 2024-2025"
     let current_semester = "spring2025";
 

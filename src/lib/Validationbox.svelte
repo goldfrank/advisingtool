@@ -54,7 +54,6 @@
     }
 
     function changeCourse(type, event){
-        // console.log(type)
         if (type == "selectCourse") {
             old_course = selectedId;
             selectedId = event.detail['selectedId']
@@ -97,7 +96,6 @@
             old_course = null;
             grade = null
         }
-        // console.log("Updated Course:", [selectedId, semester, credits, grade, req['req'], old_course])
         if (type == "clearCourse" || selectedId) {
             dispatch('changeCourse', {"req": req['req'], "course": selectedId,"semester": semester, "credits": credits, "grade": grade, "old_course": old_course, "old_semester": old_semester});
         }
