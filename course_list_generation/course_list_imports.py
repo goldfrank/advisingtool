@@ -68,9 +68,7 @@ for course in all_courses:
 		cs_tech_courses.append(course) # grab these for later
 		cs_name = course.split("#")[0]
 		cs_num = cs_name.split(" ")[1]
-		if int(cs_num[:4]) > 2461:
-			electives.append(course)
-		else:
+		if int(cs_num[:4]) <= 2461:
 			electives.remove(course)
 
 # go through and remove all the CS course numbers from all possible courses
