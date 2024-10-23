@@ -1,5 +1,7 @@
 from BS_2019_2020_2021_courses import *
 
+del possible_courses['sci_3']
+
 del possible_courses['cs2501']
 possible_courses["ethics"] = getFullNameFromNum(all_courses, ["CSCI 2211", "PHIL 2135", "CSCI 4532", "CSCI 3532"]) #count the renamed version of ethics
 
