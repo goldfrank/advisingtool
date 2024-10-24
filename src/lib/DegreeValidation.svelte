@@ -229,8 +229,6 @@
         return null
     }
 
-    // console.log("course details", course_details)
-
 
     function credits_grade(course_details, course){
         for (let item of course_details){
@@ -240,6 +238,26 @@
         }
         return [null, null]
     }
+
+
+    function generate_all_courses(formatted_reqs) {
+        let all_courses = {};
+        for (let req of formatted_reqs) {
+            for (let course of req['courses']) {
+                if (! (course in all_courses)) {
+                    all_courses[course['id']] = course;
+                }
+            }
+        }
+        let temp_courses = []
+        for (let key in all_courses){
+            temp_courses.push(all_courses[key])
+        }
+        return temp_courses
+    }
+
+    let all_courses = generate_all_courses(formatted_reqs);
+
 
 
 </script>
@@ -253,6 +271,7 @@
     grade={credits_grade(course_details, course_if_exists(swapped_assignments, req))[0]}
     semester={semester_if_exists(swapped_assignments, req)}
     selectedId={course_if_exists(swapped_assignments, req)}
+    all_courses={all_courses}
     on:changeCourse
     />
 {/each}

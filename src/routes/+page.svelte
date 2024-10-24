@@ -1,7 +1,6 @@
 <script>
     // @ts-nocheck
     import Validationbox from "$lib/Validationbox.svelte"
-    //import { requirements } from "$lib/19-20_requirements.json"
     import { requirements as requirements_2425 } from "$lib/BS_2024-2025.json"
     import { requirements as requirements_2324 } from "$lib/BS_2023-2024.json"
     import { requirements as requirements_2223 } from "$lib/BS_2022-2023.json"
@@ -45,8 +44,6 @@
     console.log(formatted_reqs)
     formatted_reqs.sort((a, b) => a['courses'].length - b['courses'].length)
     formatted_reqs.sort((a, b) => ordering[a['req']] >  ordering[b['req']])
-    // formatted_reqs.sort((a, b) => a['req'].split(/[a-zA-z_]+/) < b['req'].split(/[a-zA-z_]+/))
-    // formatted_reqs.sort((a, b) => (a['req'].match(/[0-9]+/) < b['req'].match(/[0-9]+/) && b['req'].match(/[0-9]+/) != null))
     let reassign;
     let final_assignments;
     let swapped_assignments;
@@ -123,115 +120,15 @@
 
     }
 
-    // function add_selected_course(event) {
-    //     // console.log(event)
-    //     if ((event.detail[2] == "None") && (event.detail[1] != "None")) {
-    //         // console.log(event)
-    //         let slot = event.detail[0]
-    //         let course = event.detail[1]
-    //         let course_str = course+"#"+current_semester
-    //         // console.log('adding', course, slot)
-
-    //         //dedupe
-    //         let dupe = false;
-    //         for (let old_course of course_semester) {
-    //             if (((old_course[0] == course[0]) && (old_course[1] == course[1]))) {
-    //                 dupe = true;
-    //             }
-    //         }
-    //         if (! dupe) {
-    //         course_semester.push([course, current_semester, "--", "(3)"])
-    //         console.log([course, current_semester, "--", "(3)"])
-    //         console.log(course_semester)
-    //         }
-    //         assignment_arr[0][course_str] = slot;
-    //         assignment_arr[1][slot] = course_str;
-    //         assignment_arr[2] = course_semester;
-    //     }
-
-    // }
-
-    // function clear_course(event) {
-    //     let semester = event.detail[2].toLowerCase().replace(" ","")
-    //     let slot = event.detail[0]
-    //     let course_str = event.detail[1] + "#" + semester
-    //     for (let j = 1; j < course_semester.length; j++){
-            
-    //         if (course_semester[j][0] == event.detail[1]) {
-    //             // console.log(course_semester[j]);
-    //             course_semester.splice(j,1);
-    //             course_semester = course_semester;
-    //             delete assignment_arr[0][course_str]
-    //             delete assignment_arr[1][slot]
-    //             assignment_arr[2] = course_semester
-    //             console.log(course_semester)
-    //         }   
-    //     }
-
-    // }
 
     function generate_form(event) {
         console.log('current assignments', assignment_arr);
         generate_sheet(assignment_arr, event.detail);
     }
 
-    // function updateSemester(event){
-    //     let course = event.detail[0]
-    //     let new_semester = event.detail[1]["selectedId"].toLowerCase().replace(" ","")
-    //     let slot = event.detail[2]['req']
-    //     // console.log(event.detail[3])
-    //     let old_semester;
-    //     if (event.detail[3] != "None") {
-    //         old_semester = event.detail[3].toLowerCase().replace(" ","")
-    //     }
-    //     else {
-    //         old_semester = current_semester;
-    //     }
-    //     for (let j = 0; j < course_semester.length; j++) {
-    //         if (course_semester[j][0] == course) {
-    //             course_semester[j][1] = new_semester
-    //         }
-    //     }
-    //     let course_str = course + "#" + new_semester
-    //     let old_course_str = course + "#" + old_semester
-    //     // console.log("removing", old_course_str)
-    //     delete assignment_arr[0][old_course_str]
-    //     if (event.detail[1]["selectedId"] != "None") {
-    //         assignment_arr[0][course_str] = slot
-    //         assignment_arr[1][slot] = course_str
-    //         assignment_arr[2] = course_semester
-    //         course_semester = course_semester;
-    //     }
-    // }
 
-    // function updateGrade(event){
-    //     let course = event.detail[0]
-    //     let semester = event.detail[1].toLowerCase().replace(" ","")
-
-        
-    //     for (let j = 0; j < course_semester.length; j++) {
-    //         if ((course_semester[j][0] == course) && (course_semester[j][1] = semester)){
-    //             course_semester[j][2] = event.detail[2]['selectedId']
-    //         }
-    //     }
-    //     assignment_arr[2] = course_semester
-    // }
-
-    // function updateCredits(event){
-    //     let course = event.detail[0]
-    //     let semester = event.detail[1].toLowerCase().replace(" ","")
-
-        
-    //     for (let j = 0; j < course_semester.length; j++) {
-    //         if ((course_semester[j][0] == course) && (course_semester[j][1] = semester)){
-    //             course_semester[j][3] = event.detail[2]['selectedId']
-    //         }
-    //     }
-    //     assignment_arr[2] = course_semester
-    // }
 
     function courseChanged(event){
-        // console.log(event.detail)
         // {"req": req['req'], "course": selectedId,"semester": semester, "credits": credits, "grade": grade, "old_course": old_course, "old_semester": old_semester})
         let req = event.detail['req']
         let course = event.detail['course']

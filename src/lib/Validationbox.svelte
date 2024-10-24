@@ -4,6 +4,8 @@
     import { createEventDispatcher } from 'svelte';
     import { Button } from "carbon-components-svelte";
     import { Tile } from "carbon-components-svelte";
+    import { Toggle } from "carbon-components-svelte";
+
     
     let possible_semesters = [{ id:"Fall 2021", text: "Fall 2021"},
     { id:"Spring 2022", text: "Spring 2022"},
@@ -41,10 +43,10 @@
     export let semester;
     export let credits;
     export let grade;
+    export let all_courses;
     let old_course = null;
     let old_semester = null;
-
-    // console.log(courses)
+    let toggled;
 
 
     const dispatch = createEventDispatcher();
@@ -101,6 +103,9 @@
         }
     }
 
+    console.log(req)
+console.log(all_courses)
+
 </script>
 
 <style>
@@ -141,6 +146,16 @@
         text-align: center;
         width: 8rem;
     }
+    .toggle {
+        display: inline-block; 
+        position: relative; 
+        top: -1.5rem; 
+        min-width: 6rem;
+        margin-left: 0.5rem;
+        text-align: center;
+        width: 12rem;
+        height: 1rem;
+    }
     .req-wrap {
         border: 1px;
         border-style:solid;
@@ -150,6 +165,7 @@
     }
 
 </style>
+
 
 
 <div class="course-box">
@@ -162,7 +178,7 @@
         <ComboBox 
         size=sm
         placeholder="Find Course"
-        items = {courses}
+        items = {!toggled ? courses : all_courses}
         selectedId = {selectedId}
         on:select={(e) => changeCourse('selectCourse', e)}
         on:clear={(e) => changeCourse('clearCourse', e)}
@@ -201,6 +217,16 @@
             on:select={(e) => changeCourse('selectGrade', e)}
             on:clear={(e) => changeCourse('clearGrade', e)}
             />
+        </div>
+
+        <div class="toggle">
+            
+            <Toggle 
+            bind:toggled
+            labelA="Override?" 
+            labelB="Overriden."
+            />
+            
         </div>
 
 </div>
